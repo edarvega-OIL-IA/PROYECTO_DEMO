@@ -94,7 +94,7 @@ with tab1:
                     for rec in datos.get("recomendaciones", []):
                         st.markdown(f"• {rec}")
 
-			st.divider()
+		    st.divider()
                     nombre = f"reporte_contractai_{timestamp()}.docx"
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp_docx:
                         ruta_reporte = tmp_docx.name
