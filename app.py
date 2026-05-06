@@ -94,17 +94,22 @@ with tab1:
                     for rec in datos.get("recomendaciones", []):
                         st.markdown(f"• {rec}")
 
-                    st.divider()
+			st.divider()
                     nombre = f"reporte_contractai_{timestamp()}.docx"
-                    ruta_reporte = os.path.join(tempfile.gettempdir(), nombre)
+                    with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp_docx:
+                        ruta_reporte = tmp_docx.name
+
                     contractai.generar_reporte(datos, ruta_reporte)
+
                     with open(ruta_reporte, "rb") as f:
-                        st.download_button(
-                            label="💾 Descargar reporte Word",
-                            data=f,
-                            file_name=nombre,
-                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        )
+                        contenido = f.read()
+
+                    st.download_button(
+                        label="💾 Descargar reporte Word",
+                        data=contenido,
+                        file_name=nombre,
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    )
             finally:
                 os.unlink(ruta_tmp)
 
