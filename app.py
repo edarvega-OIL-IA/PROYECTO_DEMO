@@ -6,7 +6,6 @@ import contractai
 import dataai
 from utils import timestamp
 
-# ── Configuración ──
 st.set_page_config(
     page_title="OilAI — Asistente para Vaca Muerta",
     page_icon="🛢️",
@@ -29,9 +28,6 @@ if not os.getenv("ANTHROPIC_API_KEY"):
 
 tab1, tab2 = st.tabs(["📄 ContractAI — Análisis de contratos", "📊 DataAI — Consulta de datos"])
 
-# ════════════════════════════════════════
-# TAB 1: ContractAI
-# ════════════════════════════════════════
 with tab1:
     st.subheader("Analizá contratos y licitaciones de Oil & Gas")
     st.caption("Subí un PDF y ContractAI identificará riesgos, obligaciones y recomendaciones.")
@@ -94,16 +90,13 @@ with tab1:
                     for rec in datos.get("recomendaciones", []):
                         st.markdown(f"• {rec}")
 
-		    st.divider()
+                    st.divider()
                     nombre = f"reporte_contractai_{timestamp()}.docx"
                     with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp_docx:
                         ruta_reporte = tmp_docx.name
-
                     contractai.generar_reporte(datos, ruta_reporte)
-
                     with open(ruta_reporte, "rb") as f:
                         contenido = f.read()
-
                     st.download_button(
                         label="💾 Descargar reporte Word",
                         data=contenido,
@@ -113,9 +106,6 @@ with tab1:
             finally:
                 os.unlink(ruta_tmp)
 
-# ════════════════════════════════════════
-# TAB 2: DataAI
-# ════════════════════════════════════════
 with tab2:
     st.subheader("Consultá datos de pozos en lenguaje natural")
     st.caption("Hacé preguntas sobre producción, incidentes HSE y operaciones.")
@@ -185,7 +175,6 @@ with tab2:
         st.session_state.pregunta_data = ""
         st.rerun()
 
-# ── Footer ──
 st.divider()
 st.markdown(
     "<div style='text-align:center;color:#999;font-size:0.8rem'>"
