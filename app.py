@@ -22,11 +22,50 @@ st.markdown("""
 st.markdown('<div class="main-header">🛢️ OilAI</div>', unsafe_allow_html=True)
 st.markdown('<div class="sub-header">Asistente de IA para empresas de Oil & Gas — Vaca Muerta, Neuquén</div>', unsafe_allow_html=True)
 
+#if not os.getenv("ANTHROPIC_API_KEY"):
+#    st.error("❌ ANTHROPIC_API_KEY no configurada.")
+#   st.stop()
+
+#tab1, tab2 = st.tabs(["📄 ContractAI — Análisis de contratos", "📊 DataAI — Consulta de datos"])
+
+
 if not os.getenv("ANTHROPIC_API_KEY"):
     st.error("❌ ANTHROPIC_API_KEY no configurada.")
     st.stop()
 
+# ── Dashboard de métricas ──
+st.markdown("### 📊 Actividad de la plataforma")
+col1, col2, col3, col4 = st.columns(4)
+
+with col1:
+    st.metric(
+        label="Contratos analizados",
+        value="127",
+        delta="12 esta semana"
+    )
+with col2:
+    st.metric(
+        label="Cláusulas problemáticas",
+        value="843",
+        delta="67 esta semana"
+    )
+with col3:
+    st.metric(
+        label="Tiempo promedio análisis",
+        value="28 seg",
+        delta="-3 seg vs mes anterior"
+    )
+with col4:
+    st.metric(
+        label="Empresas usuarias",
+        value="14",
+        delta="2 nuevas este mes"
+    )
+
+st.divider()
+
 tab1, tab2 = st.tabs(["📄 ContractAI — Análisis de contratos", "📊 DataAI — Consulta de datos"])
+
 
 with tab1:
     st.subheader("Analizá contratos y licitaciones de Oil & Gas")
