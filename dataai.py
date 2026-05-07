@@ -5,7 +5,7 @@ from utils import limpiar_sql, separador
 
 client = anthropic.Anthropic()
 
-DB_PATH = r"E:\PERSONAL\2026_TRABAJO\ASESOR_IA\SEMANA_05\pozos_vaca_muerta.db"
+DB_PATH = r"E:\PERSONAL\2026_TRABAJO\ASESOR_IA\PROYECTO_DEMO\pozos_vaca_muerta.db"
 
 SCHEMA = """
 Base de datos SQLite de operaciones petroleras en Vaca Muerta.
