@@ -71,6 +71,7 @@ Si no hay contenido relevante escribí: ninguna identificada.
         response = client.messages.create(
             model="claude-sonnet-4-5",
             max_tokens=2048,
+            temperature=0,
             system=CONTRACTAI_SYSTEM,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -126,6 +127,7 @@ Respondé ÚNICAMENTE con este JSON sin texto adicional.
         response = client.messages.create(
             model="claude-sonnet-4-5",
             max_tokens=2048,
+            temperature=0,
             system=CONTRACTAI_SYSTEM,
             messages=[{"role": "user", "content": prompt}]
         )
@@ -152,6 +154,7 @@ def analizar_contrato(ruta_pdf):
             response = client.messages.create(
                 model="claude-sonnet-4-5",
                 max_tokens=4096,
+                temperature=0,
                 system=CONTRACTAI_SYSTEM,
                 messages=[{"role": "user", "content": 
                           prompt_analisis_contrato(texto_completo)}]

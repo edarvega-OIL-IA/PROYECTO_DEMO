@@ -63,6 +63,7 @@ def generar_sql(pregunta):
         response = client.messages.create(
             model="claude-sonnet-4-5",
             max_tokens=512,
+	    temperature=0,
             system=system_con_schema,
             messages=[{"role": "user", "content": pregunta}]
         )
@@ -78,6 +79,7 @@ def interpretar_resultado(pregunta, sql, columnas, filas):
         response = client.messages.create(
             model="claude-sonnet-4-5",
             max_tokens=512,
+            temperature=0,
             system=DATAAI_INTERPRETE,
             messages=[{"role": "user", "content":
                       prompt_interpreta_sql(pregunta, sql, columnas, filas)}]

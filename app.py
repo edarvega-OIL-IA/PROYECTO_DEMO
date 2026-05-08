@@ -4,6 +4,7 @@ import tempfile
 import pandas as pd
 import contractai
 import dataai
+import hseai
 from utils import timestamp
 
 st.set_page_config(
@@ -64,9 +65,16 @@ with col4:
 
 st.divider()
 
-tab1, tab2 = st.tabs(["📄 ContractAI — Análisis de contratos", "📊 DataAI — Consulta de datos"])
+tab1, tab2, tab3 = st.tabs([
+    "📄 ContractAI — Análisis de contratos",
+    "📊 DataAI — Consulta de datos",
+    "🦺 HSE — Reporte de incidentes"
+])
 
 
+# ════════════════════════════════════════
+# TAB 1: Analisis Contratos
+# ════════════════════════════════════════
 with tab1:
     st.subheader("Analizá contratos y licitaciones de Oil & Gas")
     st.caption("Subí un PDF y ContractAI identificará riesgos, obligaciones y recomendaciones.")
@@ -145,6 +153,10 @@ with tab1:
             finally:
                 os.unlink(ruta_tmp)
 
+
+# ════════════════════════════════════════
+# TAB 2: Consulta de datos
+# ════════════════════════════════════════
 with tab2:
     st.subheader("Consultá datos de pozos en lenguaje natural")
     st.caption("Hacé preguntas sobre producción, incidentes HSE y operaciones.")
@@ -221,3 +233,182 @@ st.markdown(
     "</div>",
     unsafe_allow_html=True
 )
+
+
+# ════════════════════════════════════════
+# TAB 3: HSE
+# ════════════════════════════════════════
+with tab3:
+    st.subheader("Generador de reportes HSE")
+    st.caption("Describí el incidente en lenguaje natural y el sistema genera el reporte formal automáticamente.")
+
+    # Inicializar session state
+    if "hse_descripcion" not in st.session_state:
+        st.session_state.hse_descripcion = ""
+    if "hse_preguntas" not in st.session_state:
+        st.session_state.hse_preguntas = []
+    if "hse_respuestas" not in st.session_state:
+        st.session_state.hse_respuestas = {}
+    if "hse_etapa" not in st.session_state:
+        st.session_state.hse_etapa = "descripcion"
+    if "hse_datos" not in st.session_state:
+        st.session_state.hse_datos = None
+
+    # ── Etapa 1: descripción inicial ──
+    if st.session_state.hse_etapa == "descripcion":
+        st.markdown("**📝 Descripción del evento:**")
+        descripcion = st.text_area(
+            "Describí lo que ocurrió:",
+            placeholder="Ej: Hoy a las 14:30 en el pad 5, un operario resbaló cerca del flowback tank...",
+            height=120
+        )
+
+        if st.button("➡️ Continuar", type="primary") and descripcion:
+            st.session_state.hse_descripcion = descripcion
+            with st.spinner("🔍 Analizando información disponible..."):
+                analisis = hseai.detectar_info_faltante(descripcion)
+
+            if analisis and not analisis.get("suficiente_para_reporte", True):
+                faltantes = [
+                    f for f in analisis.get("informacion_faltante", [])
+                    if f.get("obligatorio", False)
+                ][:5]
+                if faltantes:
+                    st.session_state.hse_preguntas = faltantes
+                    st.session_state.hse_etapa = "preguntas"
+                    st.rerun()
+                else:
+                    st.session_state.hse_etapa = "generar"
+                    st.rerun()
+            else:
+                st.session_state.hse_etapa = "generar"
+                st.rerun()
+
+    # ── Etapa 2: preguntas adicionales ──
+    elif st.session_state.hse_etapa == "preguntas":
+        st.info(f"📋 Descripción recibida. Necesito {len(st.session_state.hse_preguntas)} dato(s) adicional(es):")
+        st.divider()
+
+        with st.form("form_preguntas_hse"):
+            respuestas_form = {}
+            for i, item in enumerate(st.session_state.hse_preguntas):
+                respuestas_form[item["campo"]] = st.text_input(
+                    f"❓ {item['pregunta']}",
+                    key=f"hse_q_{i}"
+                )
+
+            col1, col2 = st.columns([1, 3])
+            with col1:
+                if st.form_submit_button("🤖 Generar reporte", type="primary"):
+                    st.session_state.hse_respuestas = respuestas_form
+                    st.session_state.hse_etapa = "generar"
+                    st.rerun()
+            with col2:
+                if st.form_submit_button("↩️ Volver a describir"):
+                    st.session_state.hse_etapa = "descripcion"
+                    st.session_state.hse_preguntas = []
+                    st.rerun()
+
+    # ── Etapa 3: generar reporte ──
+    elif st.session_state.hse_etapa == "generar":
+        # Armar descripción completa
+        descripcion_completa = st.session_state.hse_descripcion
+        if st.session_state.hse_respuestas:
+            adicionales = "\n".join([
+                f"{campo}: {valor}"
+                for campo, valor in st.session_state.hse_respuestas.items()
+                if valor
+            ])
+            if adicionales:
+                descripcion_completa += f"\n\nInformación adicional:\n{adicionales}"
+
+        with st.spinner("🤖 Generando reporte HSE formal..."):
+            datos = hseai.generar_reporte_hse(descripcion_completa)
+
+        if not datos:
+            st.error("❌ No se pudo generar el reporte. Intentá de nuevo.")
+            if st.button("↩️ Volver"):
+                st.session_state.hse_etapa = "descripcion"
+                st.rerun()
+        else:
+            st.session_state.hse_datos = datos
+            st.session_state.hse_etapa = "resultado"
+            st.rerun()
+
+    # ── Etapa 4: mostrar resultado ──
+    elif st.session_state.hse_etapa == "resultado":
+        datos = st.session_state.hse_datos
+
+        st.divider()
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("Tipo", datos.get("tipo_incidente", "—"))
+        with col2:
+            st.metric("Severidad", datos.get("severidad", "—"))
+        with col3:
+            investiga = datos.get("requiere_investigacion_formal", False)
+            st.metric("Investigación", "⚠️ Requerida" if investiga else "✅ No requerida")
+
+        st.divider()
+        st.markdown(f"**N° Reporte:** {datos.get('numero_reporte', '—')}")
+        st.markdown(f"**Fecha:** {datos.get('fecha_hora', '—')}")
+
+        st.divider()
+        st.subheader("📋 Descripción formal")
+        st.write(datos.get("descripcion_formal", "—"))
+
+        st.divider()
+        st.subheader("🔍 Análisis de causas")
+        st.markdown(f"**Causa inmediata:** {datos.get('causa_inmediata', '—')}")
+        st.markdown(f"**Causa raíz:** {datos.get('causa_raiz', '—')}")
+
+        cinco = datos.get("cinco_porques", [])
+        if any(cinco):
+            with st.expander("Ver análisis 5 Por Qués"):
+                for i, porque in enumerate(cinco):
+                    if porque:
+                        st.markdown(f"**¿Por qué {i+1}?** {porque}")
+
+        st.divider()
+        col1, col2 = st.columns(2)
+        with col1:
+            st.subheader("✅ Acciones correctivas")
+            for ac in datos.get("acciones_correctivas", []):
+                st.markdown(f"• **{ac.get('accion', '—')}**")
+                st.caption(f"  Responsable: {ac.get('responsable', '—')} | Plazo: {ac.get('plazo', '—')}")
+
+        with col2:
+            st.subheader("🛡️ Acciones preventivas")
+            for ap in datos.get("acciones_preventivas", []):
+                st.markdown(f"• **{ap.get('accion', '—')}**")
+                st.caption(f"  Responsable: {ap.get('responsable', '—')} | Plazo: {ap.get('plazo', '—')}")
+
+        st.divider()
+        st.subheader("💡 Lecciones aprendidas")
+        st.write(datos.get("lecciones_aprendidas", "—"))
+
+        # Descargar Word
+        st.divider()
+        nombre_word = f"reporte_hse_{timestamp()}.docx"
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
+            ruta_tmp = tmp.name
+        hseai.generar_word_hse(datos, ruta_tmp)
+        with open(ruta_tmp, "rb") as f:
+            contenido = f.read()
+        st.download_button(
+            label="💾 Descargar reporte Word",
+            data=contenido,
+            file_name=nombre_word,
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+
+        # Nuevo reporte
+        st.divider()
+        if st.button("➕ Generar nuevo reporte"):
+            st.session_state.hse_etapa = "descripcion"
+            st.session_state.hse_descripcion = ""
+            st.session_state.hse_preguntas = []
+            st.session_state.hse_respuestas = {}
+            st.session_state.hse_datos = None
+            st.rerun()
+
