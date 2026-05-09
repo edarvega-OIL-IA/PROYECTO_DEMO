@@ -5,6 +5,7 @@ import pandas as pd
 import contractai
 import dataai
 import hseai
+import licitaciones as licitai
 from utils import timestamp
 
 st.set_page_config(
@@ -65,11 +66,13 @@ with col4:
 
 st.divider()
 
-tab1, tab2, tab3 = st.tabs([
+tab1, tab2, tab3, tab4 = st.tabs([
     "📄 ContractAI — Análisis de contratos",
     "📊 DataAI — Consulta de datos",
-    "🦺 HSE — Reporte de incidentes"
+    "🦺 HSE — Reporte de incidentes",
+    "🏆 Licitaciones — Comparador"
 ])
+
 
 
 # ════════════════════════════════════════
@@ -412,3 +415,150 @@ with tab3:
             st.session_state.hse_datos = None
             st.rerun()
 
+# ════════════════════════════════════════
+# TAB 4: Licitaciones
+# ════════════════════════════════════════
+with tab4:
+    st.subheader("Comparador de licitaciones Oil & Gas")
+    st.caption("Subí 2 o más pliegos en PDF y el sistema te dice cuál conviene más presentar.")
+
+    pdfs_licitaciones = st.file_uploader(
+        "Seleccioná los pliegos a comparar (mínimo 2)",
+        type=["pdf"],
+        accept_multiple_files=True,
+        help="Podés subir hasta 5 licitaciones para comparar"
+    )
+
+    if pdfs_licitaciones:
+        st.info(f"📄 {len(pdfs_licitaciones)} archivo(s) cargado(s): "
+                f"{', '.join([f.name for f in pdfs_licitaciones])}")
+
+        if len(pdfs_licitaciones) < 2:
+            st.warning("⚠️ Necesitás subir al menos 2 licitaciones para comparar.")
+        else:
+            if st.button("🏆 Comparar licitaciones", type="primary"):
+                analisis_lista = []
+                errores = []
+
+                # Analizar cada PDF
+                progress = st.progress(0)
+                for i, pdf_file in enumerate(pdfs_licitaciones):
+                    with st.spinner(f"Analizando {pdf_file.name}..."):
+                        with tempfile.NamedTemporaryFile(
+                            delete=False, suffix=".pdf"
+                        ) as tmp:
+                            tmp.write(pdf_file.read())
+                            ruta_tmp = tmp.name
+
+                        try:
+                            texto = licitai.leer_pdf(ruta_tmp)
+                            analisis = licitai.analizar_licitacion(
+                                texto, pdf_file.name
+                            )
+                            if analisis:
+                                analisis_lista.append(analisis)
+                            else:
+                                errores.append(pdf_file.name)
+                        finally:
+                            os.unlink(ruta_tmp)
+
+                    progress.progress((i + 1) / len(pdfs_licitaciones))
+
+                if errores:
+                    st.error(f"❌ No se pudo analizar: {', '.join(errores)}")
+
+                if len(analisis_lista) >= 2:
+                    with st.spinner("🏆 Generando ranking comparativo..."):
+                        comparacion = licitai.comparar_licitaciones(analisis_lista)
+
+                    if not comparacion:
+                        st.error("❌ No se pudo generar el ranking.")
+                    else:
+                        st.divider()
+                        st.subheader("🏆 Ranking de licitaciones")
+
+                        medallas = {1: "🥇", 2: "🥈", 3: "🥉"}
+                        colores = {
+                            "presentar": "green",
+                            "evaluar": "orange",
+                            "no_presentar": "red"
+                        }
+
+                        for item in comparacion.get("ranking", []):
+                            pos = item.get("posicion", 0)
+                            medalla = medallas.get(pos, f"#{pos}")
+                            rec = item.get("recomendacion", "evaluar")
+                            color = colores.get(rec, "gray")
+
+                            with st.expander(
+                                f"{medalla} Posición {pos} — "
+                                f"{item.get('titulo', item.get('nombre_archivo', '—'))} "
+                                f"| Score: {item.get('score', 0)}/100",
+                                expanded=(pos == 1)
+                            ):
+                                col1, col2, col3 = st.columns(3)
+                                with col1:
+                                    st.metric(
+                                        "Score",
+                                        f"{item.get('score', 0)}/100"
+                                    )
+                                with col2:
+                                    st.metric(
+                                        "Monto estimado",
+                                        f"USD {item.get('monto_estimado_usd', 0):,.0f}"
+                                    )
+                                with col3:
+                                    st.metric(
+                                        "Prob. de ganar",
+                                        item.get("probabilidad_ganar", "—").upper()
+                                    )
+
+                                st.markdown(
+                                    f"**Recomendación:** :{color}[{rec.upper().replace('_', ' ')}]"
+                                )
+                                st.write(item.get("motivo_ranking", "—"))
+
+                                ventajas = item.get("ventajas_clave", [])
+                                if ventajas:
+                                    st.markdown("**✅ Ventajas:**")
+                                    for v in ventajas:
+                                        st.markdown(f"• {v}")
+
+                                riesgos = item.get("riesgos_clave", [])
+                                if riesgos:
+                                    st.markdown("**⚠️ Riesgos:**")
+                                    for r in riesgos:
+                                        st.markdown(f"• {r}")
+
+                        st.divider()
+                        st.info(
+                            f"💡 **Recomendación general:** "
+                            f"{comparacion.get('recomendacion_general', '—')}"
+                        )
+
+                        advertencias = comparacion.get("advertencias", [])
+                        if advertencias:
+                            st.warning(
+                                "⚠️ **Advertencias:**\n" +
+                                "\n".join([f"• {a}" for a in advertencias])
+                            )
+
+                        # Descargar reporte Word
+                        st.divider()
+                        nombre_word = f"comparativo_licitaciones_{timestamp()}.docx"
+                        with tempfile.NamedTemporaryFile(
+                            delete=False, suffix=".docx"
+                        ) as tmp_docx:
+                            ruta_docx = tmp_docx.name
+
+                        licitai.generar_word_comparativo(
+                            analisis_lista, comparacion, ruta_docx
+                        )
+                        with open(ruta_docx, "rb") as f:
+                            contenido = f.read()
+                        st.download_button(
+                            label="💾 Descargar reporte comparativo Word",
+                            data=contenido,
+                            file_name=nombre_word,
+                            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        )
