@@ -6,6 +6,7 @@ import contractai
 import dataai
 import hseai
 import licitaciones as licitai
+import chatdoc
 from utils import timestamp
 
 # ── Configuración ──
@@ -136,12 +137,15 @@ st.markdown("""
 st.divider()
 
 # ── Tabs ──
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📄 ContractAI — Análisis de contratos",
     "📊 DataAI — Consulta de datos",
     "🦺 HSE — Reporte de incidentes",
-    "🏆 Licitaciones — Comparador"
+    "🏆 Licitaciones — Comparador",
+    "💬 ChatDoc — Chat con documentos"
 ])
+
+
 
 # ════════════════════════════════════════
 # TAB 1: ContractAI
@@ -572,6 +576,151 @@ with tab4:
                             file_name=nombre_word,
                             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         )
+
+# ════════════════════════════════════════
+# TAB 5: ChatDoc
+# ════════════════════════════════════════
+with tab5:
+    st.subheader("💬 Chat con tus documentos")
+    st.caption("Subí cualquier manual, contrato o procedimiento y hacele preguntas en lenguaje natural.")
+
+    # Inicializar session state
+    if "chatdoc_coleccion" not in st.session_state:
+        st.session_state.chatdoc_coleccion = None
+    if "chatdoc_nombre" not in st.session_state:
+        st.session_state.chatdoc_nombre = ""
+    if "chatdoc_historial" not in st.session_state:
+        st.session_state.chatdoc_historial = []
+    if "chatdoc_mensajes" not in st.session_state:
+        st.session_state.chatdoc_mensajes = []
+    if "chatdoc_info" not in st.session_state:
+        st.session_state.chatdoc_info = {}
+
+    # ── Paso 1: subir documento ──
+    if st.session_state.chatdoc_coleccion is None:
+        st.markdown("**📁 Paso 1: Cargá tu documento**")
+
+        pdf_chat = st.file_uploader(
+            "Seleccioná el PDF",
+            type=["pdf"],
+            help="Manuales HSE, contratos, procedimientos, especificaciones técnicas",
+            key="uploader_chatdoc"
+        )
+
+        if pdf_chat is not None:
+            st.info(f"📄 **{pdf_chat.name}** — {pdf_chat.size:,} bytes")
+
+            if st.button("📥 Cargar y procesar documento", type="primary"):
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
+                    tmp.write(pdf_chat.read())
+                    ruta_tmp = tmp.name
+
+                try:
+                    with st.spinner("🔍 Procesando documento..."):
+                        coleccion, n_chunks, n_paginas = chatdoc.indexar_documento(
+                            ruta_tmp, pdf_chat.name
+                        )
+
+                    st.session_state.chatdoc_coleccion = coleccion
+                    st.session_state.chatdoc_nombre = pdf_chat.name
+                    st.session_state.chatdoc_historial = []
+                    st.session_state.chatdoc_mensajes = []
+                    st.session_state.chatdoc_info = {
+                        "chunks": n_chunks,
+                        "paginas": n_paginas
+                    }
+                    st.rerun()
+                finally:
+                    os.unlink(ruta_tmp)
+
+    # ── Paso 2: chat ──
+    else:
+        info = st.session_state.chatdoc_info
+        col1, col2, col3 = st.columns([3, 1, 1])
+        with col1:
+            st.success(f"✅ **{st.session_state.chatdoc_nombre}** cargado y listo")
+        with col2:
+            st.metric("Páginas", info.get("paginas", "—"))
+        with col3:
+            st.metric("Fragmentos", info.get("chunks", "—"))
+
+        st.divider()
+
+        # Ejemplos de preguntas
+        st.markdown("**💡 Preguntas de ejemplo:**")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if st.button("¿Cuál es el objeto del contrato?", use_container_width=True):
+                st.session_state.chatdoc_pregunta = "¿Cuál es el objeto del contrato?"
+                st.rerun()
+        with col2:
+            if st.button("¿Cuáles son las obligaciones principales?", use_container_width=True):
+                st.session_state.chatdoc_pregunta = "¿Cuáles son las obligaciones principales?"
+                st.rerun()
+        with col3:
+            if st.button("¿Qué penalidades se establecen?", use_container_width=True):
+                st.session_state.chatdoc_pregunta = "¿Qué penalidades se establecen?"
+                st.rerun()
+
+        st.divider()
+
+        # Mostrar historial de conversación
+        for msg in st.session_state.chatdoc_mensajes:
+            if msg["rol"] == "usuario":
+                with st.chat_message("user"):
+                    st.write(msg["texto"])
+            else:
+                with st.chat_message("assistant"):
+                    st.write(msg["texto"])
+
+        # Input de pregunta
+        if "chatdoc_pregunta" not in st.session_state:
+            st.session_state.chatdoc_pregunta = ""
+
+        pregunta = st.chat_input("Hacé una pregunta sobre el documento...")
+
+        # También procesar si viene de un botón de ejemplo
+        if not pregunta and st.session_state.chatdoc_pregunta:
+            pregunta = st.session_state.chatdoc_pregunta
+            st.session_state.chatdoc_pregunta = ""
+
+        if pregunta:
+            # Mostrar pregunta
+            with st.chat_message("user"):
+                st.write(pregunta)
+
+            # Generar respuesta
+            with st.chat_message("assistant"):
+                with st.spinner("🔍 Buscando en el documento..."):
+                    respuesta = chatdoc.responder_pregunta(
+                        st.session_state.chatdoc_coleccion,
+                        pregunta,
+                        st.session_state.chatdoc_nombre,
+                        st.session_state.chatdoc_historial
+                    )
+                st.write(respuesta)
+
+            # Guardar en historial visual
+            st.session_state.chatdoc_mensajes.append(
+                {"rol": "usuario", "texto": pregunta}
+            )
+            st.session_state.chatdoc_mensajes.append(
+                {"rol": "asistente", "texto": respuesta}
+            )
+            st.rerun()
+
+        st.divider()
+
+        # Botón para cargar otro documento
+        if st.button("📁 Cargar otro documento"):
+            st.session_state.chatdoc_coleccion = None
+            st.session_state.chatdoc_nombre = ""
+            st.session_state.chatdoc_historial = []
+            st.session_state.chatdoc_mensajes = []
+            st.session_state.chatdoc_info = {}
+            st.session_state.chatdoc_pregunta = ""
+            st.rerun()
+
 
 # ── Footer ──
 st.markdown("""
