@@ -5,6 +5,7 @@ import pandas as pd
 import contractai
 import dataai
 import hseai
+import hseai_v2
 import licitaciones as licitai
 import chatdoc
 from utils import timestamp
@@ -137,15 +138,14 @@ st.markdown("""
 st.divider()
 
 # ── Tabs ──
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📄 ContractAI — Análisis de contratos",
     "📊 DataAI — Consulta de datos",
     "🦺 HSE — Reporte de incidentes",
     "🏆 Licitaciones — Comparador",
-    "💬 ChatDoc — Chat con documentos"
+    "💬 ChatDoc — Chat con documentos",
+    "🦺 HSE Pro — Formato Shell/Peduzzi"
 ])
-
-
 
 # ════════════════════════════════════════
 # TAB 1: ContractAI
@@ -719,6 +719,181 @@ with tab5:
             st.session_state.chatdoc_mensajes = []
             st.session_state.chatdoc_info = {}
             st.session_state.chatdoc_pregunta = ""
+            st.rerun()
+
+# ════════════════════════════════════════
+# TAB 6: HSE Pro
+# ════════════════════════════════════════
+with tab6:
+    st.subheader("🦺 HSE Pro — Formato Shell / Peduzzi")
+    st.caption("Generador de reportes HSE con el formato estándar usado por Shell, YPF y empresas contratistas de Vaca Muerta.")
+
+    col1, col2 = st.columns(2)
+    with col1:
+        st.info("📋 **Reporte Preliminar** — para Near Miss y Casi-Accidentes (formato RG-11-01 Shell)")
+    with col2:
+        st.warning("📋 **Reporte de Investigación** — para accidentes con lesiones (formato F01 PG-14 Peduzzi)")
+
+    st.divider()
+
+    if "hsev2_descripcion" not in st.session_state:
+        st.session_state.hsev2_descripcion = ""
+    if "hsev2_preguntas" not in st.session_state:
+        st.session_state.hsev2_preguntas = []
+    if "hsev2_respuestas" not in st.session_state:
+        st.session_state.hsev2_respuestas = {}
+    if "hsev2_etapa" not in st.session_state:
+        st.session_state.hsev2_etapa = "descripcion"
+    if "hsev2_datos" not in st.session_state:
+        st.session_state.hsev2_datos = None
+
+    if st.session_state.hsev2_etapa == "descripcion":
+        st.markdown("**📝 Descripción del evento:**")
+        descripcion = st.text_area(
+            "Describí lo que ocurrió:",
+            placeholder="Ej: El operario Luis Andrade fue detectado conduciendo con licencia vencida en la locación SB.x1001h durante inspección de Shell...",
+            height=120,
+            key="textarea_hsev2"
+        )
+        if st.button("➡️ Continuar", type="primary", key="btn_hsev2_continuar") and descripcion:
+            st.session_state.hsev2_descripcion = descripcion
+            with st.spinner("🔍 Analizando información disponible..."):
+                analisis = hseai_v2.detectar_info_faltante(descripcion)
+            if analisis and not analisis.get("suficiente_para_reporte", True):
+                faltantes = [
+                    f for f in analisis.get("informacion_faltante", [])
+                    if f.get("obligatorio", False)
+                ][:5]
+                if faltantes:
+                    st.session_state.hsev2_preguntas = faltantes
+                    st.session_state.hsev2_etapa = "preguntas"
+                    st.rerun()
+                else:
+                    st.session_state.hsev2_etapa = "generar"
+                    st.rerun()
+            else:
+                st.session_state.hsev2_etapa = "generar"
+                st.rerun()
+
+    elif st.session_state.hsev2_etapa == "preguntas":
+        st.info(f"📋 Necesito {len(st.session_state.hsev2_preguntas)} dato(s) adicional(es):")
+        st.divider()
+        with st.form("form_hsev2"):
+            respuestas_form = {}
+            for i, item in enumerate(st.session_state.hsev2_preguntas):
+                respuestas_form[item["campo"]] = st.text_input(
+                    f"❓ {item['pregunta']}",
+                    key=f"hsev2_q_{i}"
+                )
+            col1, col2 = st.columns([1, 3])
+            with col1:
+                if st.form_submit_button("🤖 Generar reporte", type="primary"):
+                    st.session_state.hsev2_respuestas = respuestas_form
+                    st.session_state.hsev2_etapa = "generar"
+                    st.rerun()
+            with col2:
+                if st.form_submit_button("↩️ Volver"):
+                    st.session_state.hsev2_etapa = "descripcion"
+                    st.session_state.hsev2_preguntas = []
+                    st.rerun()
+
+    elif st.session_state.hsev2_etapa == "generar":
+        descripcion_completa = st.session_state.hsev2_descripcion
+        if st.session_state.hsev2_respuestas:
+            adicionales = "\n".join([
+                f"{campo}: {valor}"
+                for campo, valor in st.session_state.hsev2_respuestas.items()
+                if valor
+                ])
+            if adicionales:
+                    descripcion_completa += f"\n\nInformación adicional:\n{adicionales}"
+
+        with st.spinner("🤖 Generando reporte HSE Pro..."):
+            datos = hseai_v2.generar_reporte_hse_v2(descripcion_completa)
+
+        if not datos:
+            st.error("❌ No se pudo generar el reporte.")
+            st.warning("💡 El sistema reintentó 3 veces sin éxito. Hacé clic en Reintentar.")
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("🔄 Reintentar", type="primary", key="btn_hsev2_reintentar"):
+                    st.rerun()
+            with col2:
+                if st.button("↩️ Volver a describir", key="btn_hsev2_volver_generar"):
+                    st.session_state.hsev2_etapa = "descripcion"
+                    st.rerun()
+        else:
+            st.session_state.hsev2_datos = datos
+            st.session_state.hsev2_etapa = "resultado"
+            st.rerun()
+
+    elif st.session_state.hsev2_etapa == "resultado":
+        datos = st.session_state.hsev2_datos
+        formato = datos.get("formato", "preliminar")
+
+        # Badge de formato
+        if formato == "investigacion":
+            st.warning(f"📋 Formato generado: **REPORTE DE INVESTIGACIÓN** (F01 PG-14)")
+        else:
+            st.info(f"📋 Formato generado: **INFORME PRELIMINAR** (RG-11-01)")
+
+        st.divider()
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("N° Reporte", datos.get("numero_reporte", "—").split("-")[-1])
+        with col2:
+            st.metric("Gravedad", datos.get("gravedad", "—"))
+        with col3:
+            investiga = datos.get("requiere_investigacion_formal", False)
+            st.metric("Investigación", "⚠️ Requerida" if investiga else "✅ No requerida")
+
+        st.divider()
+        acc = datos.get("datos_accidentado", {})
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown(f"**Accidentado:** {acc.get('nombre', '—')} {acc.get('apellido', '—')}")
+            st.markdown(f"**Función:** {acc.get('funcion', '—')}")
+        with col2:
+            st.markdown(f"**Ubicación:** {datos.get('ubicacion', '—')}")
+            st.markdown(f"**Circunstancia:** {datos.get('circunstancia', '—')}")
+
+        st.divider()
+        st.subheader("📋 Descripción del suceso")
+        st.write(datos.get("descripcion_suceso", "—"))
+
+        st.divider()
+        st.subheader("🔍 Causas raíz identificadas")
+        for cr in datos.get("causas_raiz_identificadas", []):
+            st.markdown(f"• **[{cr.get('codigo', '—')}]** {cr.get('descripcion', '—')}")
+
+        st.divider()
+        st.subheader("✅ Acciones correctivas")
+        for ac in datos.get("acciones_correctivas", []):
+            st.markdown(f"**{ac.get('numero', '—')}.** {ac.get('descripcion', '—')}")
+            st.caption(f"Responsable: {ac.get('responsable', '—')} | Plazo: {ac.get('plazo', '—')}")
+
+        # Descargar Word
+        st.divider()
+        nombre_word = f"reporte_hse_pro_{timestamp()}.docx"
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
+            ruta_tmp = tmp.name
+        hseai_v2.generar_word_hse_v2(datos, ruta_tmp)
+        with open(ruta_tmp, "rb") as f:
+            contenido = f.read()
+        st.download_button(
+            label="💾 Descargar reporte Word (formato Shell/Peduzzi)",
+            data=contenido,
+            file_name=nombre_word,
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        )
+
+        st.divider()
+        if st.button("➕ Nuevo reporte", key="btn_hsev2_nuevo"):
+            st.session_state.hsev2_etapa = "descripcion"
+            st.session_state.hsev2_descripcion = ""
+            st.session_state.hsev2_preguntas = []
+            st.session_state.hsev2_respuestas = {}
+            st.session_state.hsev2_datos = None
             st.rerun()
 
 
