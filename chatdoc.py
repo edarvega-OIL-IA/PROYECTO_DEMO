@@ -121,4 +121,6 @@ Si la información no está en los fragmentos, decilo claramente.
 
     # Guardar en historial la pregunta original, no el prompt completo
     historial[-1] = {"role": "user", "content": pregunta}
-    historial.append({"role": "assistant", "c
+    historial.append({"role": "assistant", "content": respuesta})
+
+    return respuesta
