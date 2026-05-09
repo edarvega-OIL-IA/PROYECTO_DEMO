@@ -875,8 +875,13 @@ with tab6:
         st.subheader("✅ Acciones correctivas")
 
         for ac in datos.get("acciones_correctivas", []):
-            st.markdown(f"**{ac.get('numero', '—')}.** {ac.get('descripcion', '—')}")
-            st.caption(f"Responsable: {ac.get('responsable', '—')} | Plazo: {ac.get('plazo', '—')}")
+            if isinstance(ac, dict):
+                st.markdown(f"**{ac.get('numero', '—')}.** {ac.get('descripcion', '—')}")
+                st.caption(f"Responsable: {ac.get('responsable', '—')} | Plazo: {ac.get('plazo', '—')}")
+            elif isinstance(ac, str):
+                st.markdown(f"• {ac}")
+
+
 
         # Descargar Word
         st.divider()
