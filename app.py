@@ -8,64 +8,134 @@ import hseai
 import licitaciones as licitai
 from utils import timestamp
 
+# ── Configuración ──
 st.set_page_config(
     page_title="OilAI — Asistente para Vaca Muerta",
     page_icon="🛢️",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state="collapsed"
 )
 
+
+# ── Estilos ──
 st.markdown("""
 <style>
-    .main-header { font-size: 2rem; font-weight: bold; color: #1F5C99; text-align: center; padding: 1rem 0; }
-    .sub-header { font-size: 1rem; color: #666; text-align: center; margin-bottom: 2rem; }
+    .stApp { background-color: #0F1923; }
+
+    .main-header {
+        background: linear-gradient(135deg, #1A3A5C 0%, #0F1923 60%, #1A2A1A 100%);
+        border-bottom: 2px solid #2A6496;
+        padding: 2rem 2rem 1.5rem;
+        margin: -1rem -1rem 2rem -1rem;
+        text-align: center;
+    }
+    .main-title { font-size: 2.8rem; font-weight: 800; color: #FFFFFF; letter-spacing: 0.05em; margin: 0; }
+    .main-title span { color: #4A9FD4; }
+    .main-subtitle { font-size: 1rem; color: #8AABB8; margin-top: 0.4rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .main-badge { display: inline-block; background: #1E4D2B; color: #5DCB7A; font-size: 0.75rem; padding: 3px 12px; border-radius: 20px; margin-top: 0.5rem; border: 1px solid #2A7A40; letter-spacing: 0.05em; }
+
+    .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.5rem; }
+    .metric-card { background: #162330; border: 1px solid #1E3A50; border-radius: 10px; padding: 1rem 1.25rem; text-align: center; border-top: 3px solid #2A6496; }
+    .metric-value { font-size: 2rem; font-weight: 700; color: #FFFFFF; margin: 0; }
+    .metric-label { font-size: 0.75rem; color: #7A9BB0; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
+    .metric-delta-up { font-size: 0.75rem; color: #5DCB7A; margin-top: 4px; }
+    .metric-delta-neutral { font-size: 0.75rem; color: #4A9FD4; margin-top: 4px; }
+
+    .stTabs [data-baseweb="tab-list"] { background: #162330; border-radius: 10px; padding: 4px; gap: 4px; border: 1px solid #1E3A50; }
+    .stTabs [data-baseweb="tab"] { background: transparent; color: #7A9BB0; border-radius: 8px; padding: 8px 16px; font-size: 0.85rem; font-weight: 500; }
+    .stTabs [aria-selected="true"] { background: #1A3A5C !important; color: #FFFFFF !important; }
+
+    .stMarkdown, .stText, p, label { color: #C8D8E4 !important; }
+    h1, h2, h3 { color: #FFFFFF !important; }
+
+    .stButton > button[kind="primary"] { background: linear-gradient(135deg, #2A6496, #1A4A7A); color: white; border: none; border-radius: 8px; padding: 0.5rem 1.5rem; font-weight: 600; }
+    .stButton > button[kind="primary"]:hover { background: linear-gradient(135deg, #3A74A6, #2A5A8A); }
+
+    .stFileUploader { background: #162330 !important; border: 2px dashed #2A6496 !important; border-radius: 10px !important; }
+
+    [data-testid="stMetricValue"] { color: #FFFFFF !important; font-size: 1.8rem !important; }
+    [data-testid="stMetricLabel"] { color: #7A9BB0 !important; }
+    [data-testid="stMetricDelta"] { font-size: 0.8rem !important; }
+
+    hr { border-color: #1E3A50 !important; }
+
+    .footer { text-align: center; color: #3A5A70; font-size: 0.75rem; padding: 1rem 0; border-top: 1px solid #1E3A50; margin-top: 2rem; letter-spacing: 0.05em; }
+
+    .streamlit-expanderHeader { background: #162330 !important; color: #C8D8E4 !important; border: 1px solid #1E3A50 !important; border-radius: 8px !important; }
+
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea { background: #162330 !important; color: #FFFFFF !important; border: 1px solid #2A6496 !important; border-radius: 8px !important; }
+
+    .stSuccess { background: #1A2E1A !important; border-left: 4px solid #5DCB7A !important; }
+    .stError { background: #2E1A1A !important; border-left: 4px solid #E05C5C !important; }
+    .stWarning { background: #2E2A1A !important; border-left: 4px solid #F0A500 !important; }
+    .stInfo { background: #1A2A3A !important; border-left: 4px solid #4A9FD4 !important; }
+
+    [data-testid="stDataFrame"] { background: #162330 !important; }
+    .stSpinner > div { border-top-color: #4A9FD4 !important; }
+    .stProgress > div > div { background: #2A6496 !important; }
+    [data-testid="stSidebar"] { display: none; }
+
+    /* ── Evitar traducción automática ── */
+    .main-header, .main-title, .main-subtitle, .main-badge {
+        -webkit-user-select: none;
+    }
+    [translate="no"] { translate: no; }
+
+
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<div class="main-header">🛢️ OilAI</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Asistente de IA para empresas de Oil & Gas — Vaca Muerta, Neuquén</div>', unsafe_allow_html=True)
-
-#if not os.getenv("ANTHROPIC_API_KEY"):
-#    st.error("❌ ANTHROPIC_API_KEY no configurada.")
-#   st.stop()
-
-#tab1, tab2 = st.tabs(["📄 ContractAI — Análisis de contratos", "📊 DataAI — Consulta de datos"])
 
 
+
+# ── Header ──
+st.markdown("""
+<div class="main-header" translate="no" lang="en">
+    <div class="main-title">🛢️ Oil<span>AI</span></div>
+    <div class="main-subtitle" translate="no">
+        INTELIGENCIA ARTIFICIAL PARA OIL &amp; GAS · VACA MUERTA, NEUQUÉN
+    </div>
+    <div class="main-badge" translate="no">⚡ Eduardo Ariel Vega by Claude AI</div>
+</div>
+""", unsafe_allow_html=True)
+
+
+
+# ── API Key ──
 if not os.getenv("ANTHROPIC_API_KEY"):
     st.error("❌ ANTHROPIC_API_KEY no configurada.")
     st.stop()
 
-# ── Dashboard de métricas ──
-st.markdown("### 📊 Actividad de la plataforma")
-col1, col2, col3, col4 = st.columns(4)
-
-with col1:
-    st.metric(
-        label="Contratos analizados",
-        value="127",
-        delta="12 esta semana"
-    )
-with col2:
-    st.metric(
-        label="Cláusulas problemáticas",
-        value="843",
-        delta="67 esta semana"
-    )
-with col3:
-    st.metric(
-        label="Tiempo promedio análisis",
-        value="28 seg",
-        delta="-3 seg vs mes anterior"
-    )
-with col4:
-    st.metric(
-        label="Empresas usuarias",
-        value="14",
-        delta="2 nuevas este mes"
-    )
+# ── Métricas ──
+st.markdown("""
+<div class="metrics-row">
+    <div class="metric-card">
+        <div class="metric-value">127</div>
+        <div class="metric-label">Contratos analizados</div>
+        <div class="metric-delta-up">↑ 12 esta semana</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">843</div>
+        <div class="metric-label">Cláusulas problemáticas</div>
+        <div class="metric-delta-up">↑ 67 esta semana</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">28 seg</div>
+        <div class="metric-label">Tiempo promedio análisis</div>
+        <div class="metric-delta-neutral">↓ 3 seg vs mes anterior</div>
+    </div>
+    <div class="metric-card">
+        <div class="metric-value">14</div>
+        <div class="metric-label">Empresas usuarias</div>
+        <div class="metric-delta-up">↑ 2 nuevas este mes</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 st.divider()
 
+# ── Tabs ──
 tab1, tab2, tab3, tab4 = st.tabs([
     "📄 ContractAI — Análisis de contratos",
     "📊 DataAI — Consulta de datos",
@@ -73,10 +143,8 @@ tab1, tab2, tab3, tab4 = st.tabs([
     "🏆 Licitaciones — Comparador"
 ])
 
-
-
 # ════════════════════════════════════════
-# TAB 1: Analisis Contratos
+# TAB 1: ContractAI
 # ════════════════════════════════════════
 with tab1:
     st.subheader("Analizá contratos y licitaciones de Oil & Gas")
@@ -90,7 +158,6 @@ with tab1:
 
     if pdf_file is not None:
         st.info(f"📄 Archivo cargado: **{pdf_file.name}** ({pdf_file.size:,} bytes)")
-
         analizar = st.button("🔍 Analizar contrato", type="primary")
 
         if analizar:
@@ -109,7 +176,6 @@ with tab1:
                     col1, col2, col3 = st.columns(3)
                     riesgo = datos.get("riesgo_general", "—").upper()
                     firmar = datos.get("firmar", False)
-
                     with col1:
                         st.metric("Riesgo general", riesgo)
                     with col2:
@@ -156,9 +222,8 @@ with tab1:
             finally:
                 os.unlink(ruta_tmp)
 
-
 # ════════════════════════════════════════
-# TAB 2: Consulta de datos
+# TAB 2: DataAI
 # ════════════════════════════════════════
 with tab2:
     st.subheader("Consultá datos de pozos en lenguaje natural")
@@ -229,15 +294,6 @@ with tab2:
         st.session_state.pregunta_data = ""
         st.rerun()
 
-st.divider()
-st.markdown(
-    "<div style='text-align:center;color:#999;font-size:0.8rem'>"
-    "OilAI — Desarrollado con Claude IA · Vaca Muerta, Neuquén · 2026"
-    "</div>",
-    unsafe_allow_html=True
-)
-
-
 # ════════════════════════════════════════
 # TAB 3: HSE
 # ════════════════════════════════════════
@@ -245,7 +301,6 @@ with tab3:
     st.subheader("Generador de reportes HSE")
     st.caption("Describí el incidente en lenguaje natural y el sistema genera el reporte formal automáticamente.")
 
-    # Inicializar session state
     if "hse_descripcion" not in st.session_state:
         st.session_state.hse_descripcion = ""
     if "hse_preguntas" not in st.session_state:
@@ -257,7 +312,6 @@ with tab3:
     if "hse_datos" not in st.session_state:
         st.session_state.hse_datos = None
 
-    # ── Etapa 1: descripción inicial ──
     if st.session_state.hse_etapa == "descripcion":
         st.markdown("**📝 Descripción del evento:**")
         descripcion = st.text_area(
@@ -265,12 +319,10 @@ with tab3:
             placeholder="Ej: Hoy a las 14:30 en el pad 5, un operario resbaló cerca del flowback tank...",
             height=120
         )
-
         if st.button("➡️ Continuar", type="primary") and descripcion:
             st.session_state.hse_descripcion = descripcion
             with st.spinner("🔍 Analizando información disponible..."):
                 analisis = hseai.detectar_info_faltante(descripcion)
-
             if analisis and not analisis.get("suficiente_para_reporte", True):
                 faltantes = [
                     f for f in analisis.get("informacion_faltante", [])
@@ -287,11 +339,9 @@ with tab3:
                 st.session_state.hse_etapa = "generar"
                 st.rerun()
 
-    # ── Etapa 2: preguntas adicionales ──
     elif st.session_state.hse_etapa == "preguntas":
         st.info(f"📋 Descripción recibida. Necesito {len(st.session_state.hse_preguntas)} dato(s) adicional(es):")
         st.divider()
-
         with st.form("form_preguntas_hse"):
             respuestas_form = {}
             for i, item in enumerate(st.session_state.hse_preguntas):
@@ -299,7 +349,6 @@ with tab3:
                     f"❓ {item['pregunta']}",
                     key=f"hse_q_{i}"
                 )
-
             col1, col2 = st.columns([1, 3])
             with col1:
                 if st.form_submit_button("🤖 Generar reporte", type="primary"):
@@ -312,9 +361,7 @@ with tab3:
                     st.session_state.hse_preguntas = []
                     st.rerun()
 
-    # ── Etapa 3: generar reporte ──
     elif st.session_state.hse_etapa == "generar":
-        # Armar descripción completa
         descripcion_completa = st.session_state.hse_descripcion
         if st.session_state.hse_respuestas:
             adicionales = "\n".join([
@@ -324,10 +371,8 @@ with tab3:
             ])
             if adicionales:
                 descripcion_completa += f"\n\nInformación adicional:\n{adicionales}"
-
         with st.spinner("🤖 Generando reporte HSE formal..."):
             datos = hseai.generar_reporte_hse(descripcion_completa)
-
         if not datos:
             st.error("❌ No se pudo generar el reporte. Intentá de nuevo.")
             if st.button("↩️ Volver"):
@@ -338,10 +383,8 @@ with tab3:
             st.session_state.hse_etapa = "resultado"
             st.rerun()
 
-    # ── Etapa 4: mostrar resultado ──
     elif st.session_state.hse_etapa == "resultado":
         datos = st.session_state.hse_datos
-
         st.divider()
         col1, col2, col3 = st.columns(3)
         with col1:
@@ -379,7 +422,6 @@ with tab3:
             for ac in datos.get("acciones_correctivas", []):
                 st.markdown(f"• **{ac.get('accion', '—')}**")
                 st.caption(f"  Responsable: {ac.get('responsable', '—')} | Plazo: {ac.get('plazo', '—')}")
-
         with col2:
             st.subheader("🛡️ Acciones preventivas")
             for ap in datos.get("acciones_preventivas", []):
@@ -390,7 +432,6 @@ with tab3:
         st.subheader("💡 Lecciones aprendidas")
         st.write(datos.get("lecciones_aprendidas", "—"))
 
-        # Descargar Word
         st.divider()
         nombre_word = f"reporte_hse_{timestamp()}.docx"
         with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp:
@@ -405,7 +446,6 @@ with tab3:
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         )
 
-        # Nuevo reporte
         st.divider()
         if st.button("➕ Generar nuevo reporte"):
             st.session_state.hse_etapa = "descripcion"
@@ -439,29 +479,22 @@ with tab4:
             if st.button("🏆 Comparar licitaciones", type="primary"):
                 analisis_lista = []
                 errores = []
-
-                # Analizar cada PDF
                 progress = st.progress(0)
+
                 for i, pdf_file in enumerate(pdfs_licitaciones):
                     with st.spinner(f"Analizando {pdf_file.name}..."):
-                        with tempfile.NamedTemporaryFile(
-                            delete=False, suffix=".pdf"
-                        ) as tmp:
+                        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
                             tmp.write(pdf_file.read())
                             ruta_tmp = tmp.name
-
                         try:
                             texto = licitai.leer_pdf(ruta_tmp)
-                            analisis = licitai.analizar_licitacion(
-                                texto, pdf_file.name
-                            )
+                            analisis = licitai.analizar_licitacion(texto, pdf_file.name)
                             if analisis:
                                 analisis_lista.append(analisis)
                             else:
                                 errores.append(pdf_file.name)
                         finally:
                             os.unlink(ruta_tmp)
-
                     progress.progress((i + 1) / len(pdfs_licitaciones))
 
                 if errores:
@@ -498,24 +531,13 @@ with tab4:
                             ):
                                 col1, col2, col3 = st.columns(3)
                                 with col1:
-                                    st.metric(
-                                        "Score",
-                                        f"{item.get('score', 0)}/100"
-                                    )
+                                    st.metric("Score", f"{item.get('score', 0)}/100")
                                 with col2:
-                                    st.metric(
-                                        "Monto estimado",
-                                        f"USD {item.get('monto_estimado_usd', 0):,.0f}"
-                                    )
+                                    st.metric("Monto estimado", f"USD {item.get('monto_estimado_usd', 0):,.0f}")
                                 with col3:
-                                    st.metric(
-                                        "Prob. de ganar",
-                                        item.get("probabilidad_ganar", "—").upper()
-                                    )
+                                    st.metric("Prob. de ganar", item.get("probabilidad_ganar", "—").upper())
 
-                                st.markdown(
-                                    f"**Recomendación:** :{color}[{rec.upper().replace('_', ' ')}]"
-                                )
+                                st.markdown(f"**Recomendación:** :{color}[{rec.upper().replace('_', ' ')}]")
                                 st.write(item.get("motivo_ranking", "—"))
 
                                 ventajas = item.get("ventajas_clave", [])
@@ -531,29 +553,17 @@ with tab4:
                                         st.markdown(f"• {r}")
 
                         st.divider()
-                        st.info(
-                            f"💡 **Recomendación general:** "
-                            f"{comparacion.get('recomendacion_general', '—')}"
-                        )
+                        st.info(f"💡 **Recomendación general:** {comparacion.get('recomendacion_general', '—')}")
 
                         advertencias = comparacion.get("advertencias", [])
                         if advertencias:
-                            st.warning(
-                                "⚠️ **Advertencias:**\n" +
-                                "\n".join([f"• {a}" for a in advertencias])
-                            )
+                            st.warning("⚠️ **Advertencias:**\n" + "\n".join([f"• {a}" for a in advertencias]))
 
-                        # Descargar reporte Word
                         st.divider()
                         nombre_word = f"comparativo_licitaciones_{timestamp()}.docx"
-                        with tempfile.NamedTemporaryFile(
-                            delete=False, suffix=".docx"
-                        ) as tmp_docx:
+                        with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as tmp_docx:
                             ruta_docx = tmp_docx.name
-
-                        licitai.generar_word_comparativo(
-                            analisis_lista, comparacion, ruta_docx
-                        )
+                        licitai.generar_word_comparativo(analisis_lista, comparacion, ruta_docx)
                         with open(ruta_docx, "rb") as f:
                             contenido = f.read()
                         st.download_button(
@@ -562,3 +572,10 @@ with tab4:
                             file_name=nombre_word,
                             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         )
+
+# ── Footer ──
+st.markdown("""
+<div class="footer">
+    OilAI · Desarrollado por Eduardo Ariel Vega con Claude IA · Vaca Muerta, Neuquén · 2026
+</div>
+""", unsafe_allow_html=True)
