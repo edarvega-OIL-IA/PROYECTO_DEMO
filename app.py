@@ -863,11 +863,17 @@ with tab6:
 
         st.divider()
         st.subheader("🔍 Causas raíz identificadas")
-        for cr in datos.get("causas_raiz_identificadas", []):
-            st.markdown(f"• **[{cr.get('codigo', '—')}]** {cr.get('descripcion', '—')}")
+
+        for ac in datos.get("acciones_correctivas", []):
+            if isinstance(ac, dict):
+                st.markdown(f"**{ac.get('numero', '—')}.** {ac.get('descripcion', '—')}")
+                st.caption(f"Responsable: {ac.get('responsable', '—')} | Plazo: {ac.get('plazo', '—')}")
+            elif isinstance(ac, str):
+                st.markdown(f"• {ac}")
 
         st.divider()
         st.subheader("✅ Acciones correctivas")
+
         for ac in datos.get("acciones_correctivas", []):
             st.markdown(f"**{ac.get('numero', '—')}.** {ac.get('descripcion', '—')}")
             st.caption(f"Responsable: {ac.get('responsable', '—')} | Plazo: {ac.get('plazo', '—')}")
