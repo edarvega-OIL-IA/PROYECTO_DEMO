@@ -668,25 +668,23 @@ def generar_word_investigacion(datos, ruta_salida):
             row.cells[3].text = ac.get("plazo", "—")
 
 
-
     # Plan de mitigación
     plan = datos.get("plan_mitigacion", [])
-    if plan and isinstance(plan[0], dict) and plan[0].get("accion"):    
+    plan_valido = [p for p in plan if isinstance(p, dict) and p.get("accion")]
+    if plan_valido:
         doc.add_paragraph()
         doc.add_heading("Plan de Mitigación (para evitar recurrencia)", 2)
         tbl_pm = doc.add_table(rows=1, cols=5)
         tbl_pm.style = "Table Grid"
         for j, h in enumerate(["Acción", "Objetivo", "Responsable", "Plazo", "Indicador"]):
             tbl_pm.rows[0].cells[j].paragraphs[0].add_run(h).bold = True
-
-        for pm in plan:
-            if isinstance(pm, dict):
-                row = tbl_pm.add_row()
-                row.cells[0].text = pm.get("accion", "—")
-                row.cells[1].text = pm.get("objetivo", "—")
-                row.cells[2].text = pm.get("responsable", "—")
-                row.cells[3].text = pm.get("plazo", "—")
-                row.cells[4].text = pm.get("indicador", "—")
+        for pm in plan_valido:
+            row = tbl_pm.add_row()
+            row.cells[0].text = pm.get("accion", "—")
+            row.cells[1].text = pm.get("objetivo", "—")
+            row.cells[2].text = pm.get("responsable", "—")
+            row.cells[3].text = pm.get("plazo", "—")
+            row.cells[4].text = pm.get("indicador", "—")
 
 
     doc.add_paragraph()
