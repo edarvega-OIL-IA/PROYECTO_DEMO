@@ -598,7 +598,9 @@ def generar_word_investigacion(datos, ruta_salida):
 
     # Listado global de causas raíz
     doc.add_heading("LISTADO GLOBAL DE CAUSAS RAÍZ", 2)
-    causas_identificadas = [cr.get("codigo", "") for cr in datos.get("causas_raiz_identificadas", [])]
+    causas_identificadas = [
+        cr.get("codigo", "") if isinstance(cr, dict) else ""
+        for cr in datos.get("causas_raiz_identificadas", [])]
 
     for grupo, subgrupos in CAUSAS_RAIZ.items():
         doc.add_paragraph(grupo).runs[0].bold = True
@@ -651,12 +653,16 @@ def generar_word_investigacion(datos, ruta_salida):
     tbl_d.style = "Table Grid"
     for j, h in enumerate(["N°", "Descripción", "Responsable", "Plazo"]):
         tbl_d.rows[0].cells[j].paragraphs[0].add_run(h).bold = True
+
     for ac in datos.get("acciones_correctivas", []):
-        row = tbl_d.add_row()
-        row.cells[0].text = str(ac.get("numero", "—"))
-        row.cells[1].text = ac.get("descripcion", "—")
-        row.cells[2].text = ac.get("responsable", "—")
-        row.cells[3].text = ac.get("plazo", "—")
+        if isinstance(ac, dict):
+            row = tbl_d.add_row()
+            row.cells[0].text = str(ac.get("numero", "—"))
+            row.cells[1].text = ac.get("descripcion", "—")
+            row.cells[2].text = ac.get("responsable", "—")
+            row.cells[3].text = ac.get("plazo", "—")
+
+
 
     # Plan de mitigación
     plan = datos.get("plan_mitigacion", [])
@@ -667,13 +673,16 @@ def generar_word_investigacion(datos, ruta_salida):
         tbl_pm.style = "Table Grid"
         for j, h in enumerate(["Acción", "Objetivo", "Responsable", "Plazo", "Indicador"]):
             tbl_pm.rows[0].cells[j].paragraphs[0].add_run(h).bold = True
+
         for pm in plan:
-            row = tbl_pm.add_row()
-            row.cells[0].text = pm.get("accion", "—")
-            row.cells[1].text = pm.get("objetivo", "—")
-            row.cells[2].text = pm.get("responsable", "—")
-            row.cells[3].text = pm.get("plazo", "—")
-            row.cells[4].text = pm.get("indicador", "—")
+            if isinstance(pm, dict):
+                row = tbl_pm.add_row()
+                row.cells[0].text = pm.get("accion", "—")
+                row.cells[1].text = pm.get("objetivo", "—")
+                row.cells[2].text = pm.get("responsable", "—")
+                row.cells[3].text = pm.get("plazo", "—")
+                row.cells[4].text = pm.get("indicador", "—")
+
 
     doc.add_paragraph()
 
