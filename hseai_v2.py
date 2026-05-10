@@ -631,10 +631,15 @@ def generar_word_investigacion(datos, ruta_salida):
     p_nota.add_run(
         "Nota: Las causas raíz son REALES — resultado del proceso de investigación. No son probables ni especulativas."
     ).font.color.rgb = RGBColor(128, 128, 128)
+ 
     for i, cr in enumerate(datos.get("causas_raiz_identificadas", []), 1):
-        doc.add_paragraph(
-            f"{i:02d}. [{cr.get('codigo', '—')}] {cr.get('descripcion', '—')}"
-        )
+            if isinstance(cr, dict):
+                doc.add_paragraph(
+                    f"{i:02d}. [{cr.get('codigo', '—')}] {cr.get('descripcion', '—')}"
+                )
+            elif isinstance(cr, str):
+                doc.add_paragraph(f"{i:02d}. {cr}")
+
 
     # Método análisis causa raíz
     metodo = datos.get("metodo_analisis_causa_raiz", "")
