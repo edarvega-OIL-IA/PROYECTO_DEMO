@@ -671,7 +671,7 @@ def generar_word_investigacion(datos, ruta_salida):
 
     # Plan de mitigación
     plan = datos.get("plan_mitigacion", [])
-    if plan and plan[0].get("accion"):
+    if plan and isinstance(plan[0], dict) and plan[0].get("accion"):    
         doc.add_paragraph()
         doc.add_heading("Plan de Mitigación (para evitar recurrencia)", 2)
         tbl_pm = doc.add_table(rows=1, cols=5)
