@@ -864,12 +864,11 @@ with tab6:
         st.divider()
         st.subheader("🔍 Causas raíz identificadas")
 
-        for ac in datos.get("acciones_correctivas", []):
-            if isinstance(ac, dict):
-                st.markdown(f"**{ac.get('numero', '—')}.** {ac.get('descripcion', '—')}")
-                st.caption(f"Responsable: {ac.get('responsable', '—')} | Plazo: {ac.get('plazo', '—')}")
-            elif isinstance(ac, str):
-                st.markdown(f"• {ac}")
+        for cr in datos.get("causas_raiz_identificadas", []):
+            if isinstance(cr, dict):
+                st.markdown(f"• **[{cr.get('codigo', '—')}]** {cr.get('descripcion', '—')}")
+            elif isinstance(cr, str):
+                st.markdown(f"• {cr}")
 
         st.divider()
         st.subheader("✅ Acciones correctivas")
@@ -880,7 +879,6 @@ with tab6:
                 st.caption(f"Responsable: {ac.get('responsable', '—')} | Plazo: {ac.get('plazo', '—')}")
             elif isinstance(ac, str):
                 st.markdown(f"• {ac}")
-
 
 
         # Descargar Word
