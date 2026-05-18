@@ -28,7 +28,7 @@ def cargar_demo():
             "invoice":      "PO# 02-0216 / INV. 00000001",
             "awb_bl":       "ONEY-XXXXXXXXXX",
             "hawb":         "HBOL000/CRT-0001",
-            "agencia":      "KILGORE",
+            "agencia":      "EAV_01",
             "shipper":      "Flowserve Corporation",
             "cnee":         "EAV IA Empresa 01",
             "origen":       "Houston, USA",
@@ -45,7 +45,7 @@ def cargar_demo():
             "invoice":      "PO# 02-0201 / INV. 00000002",
             "awb_bl":       "000-00000000",
             "hawb":         "HAW-NQN-0000-00",
-            "agencia":      "DHL Global",
+            "agencia":      "EAV_02",
             "shipper":      "Honeywell Process Solutions",
             "cnee":         "EAV IA Empresa 02",
             "origen":       "Houston, USA",
@@ -62,7 +62,7 @@ def cargar_demo():
             "invoice":      "PO# 03-0088 / INV. 00000003",
             "awb_bl":       "MSCU-0000000000",
             "hawb":         "HBOL-NQN-0000-00",
-            "agencia":      "Transaltic",
+            "agencia":      "EAV_03",
             "shipper":      "Baker Hughes GmbH",
             "cnee":         "EAV IA Empresa 03",
             "origen":       "Alemania",
@@ -256,7 +256,7 @@ def tracking_page():
                 invoice    = st.text_input("Invoice / Referencia *", placeholder="PO# 02-0300 / INV. 12345")
                 awb_bl     = st.text_input("AWB / BL Madre *",        placeholder="ONEY-XXXXXXXX")
                 hawb       = st.text_input("HAWB / BL Hijo",          placeholder="HBOL-XXX")
-                agencia    = st.text_input("Agencia *",               placeholder="KILGORE")
+                agencia    = st.text_input("Agencia *",               placeholder="EAV_01")
             with c2:
                 shipper    = st.text_input("Shipper *",               placeholder="Flowserve Corp.")
                 cnee       = st.text_input("Consignatario *",         placeholder="NQN Petrol S.R.L.")
