@@ -29,7 +29,7 @@ def cargar_demo():
             "awb_bl":       "ONEY-XXXXXXXXXX",
             "hawb":         "HBOL000/CRT-0001",
             "agencia":      "EAV_01",
-            "shipper":      "Flowserve Corporation",
+            "shipper":      "EAV Corporation",
             "cnee":         "EAV IA Empresa 01",
             "origen":       "Houston, USA",
             "bultos":       60,
@@ -46,7 +46,7 @@ def cargar_demo():
             "awb_bl":       "000-00000000",
             "hawb":         "HAW-NQN-0000-00",
             "agencia":      "EAV_02",
-            "shipper":      "Honeywell Process Solutions",
+            "shipper":      "EAV Corporation 02",
             "cnee":         "EAV IA Empresa 02",
             "origen":       "Houston, USA",
             "bultos":       1,
@@ -63,7 +63,7 @@ def cargar_demo():
             "awb_bl":       "MSCU-0000000000",
             "hawb":         "HBOL-NQN-0000-00",
             "agencia":      "EAV_03",
-            "shipper":      "Baker Hughes GmbH",
+            "shipper":      "BEAV Corporation 03",
             "cnee":         "EAV IA Empresa 03",
             "origen":       "Alemania",
             "bultos":       5,
@@ -258,8 +258,8 @@ def tracking_page():
                 hawb       = st.text_input("HAWB / BL Hijo",          placeholder="HBOL-XXX")
                 agencia    = st.text_input("Agencia *",               placeholder="EAV_01")
             with c2:
-                shipper    = st.text_input("Shipper *",               placeholder="Flowserve Corp.")
-                cnee       = st.text_input("Consignatario *",         placeholder="NQN Petrol S.R.L.")
+                shipper    = st.text_input("Shipper *",               placeholder="EAV Corporation 01")
+                cnee       = st.text_input("Consignatario *",         placeholder="EAV Corporation 02")
                 origen     = st.selectbox("Origen *",                 ORIGENES)
                 valor_fob  = st.text_input("Valor FOB",               placeholder="USD 50.000")
 
