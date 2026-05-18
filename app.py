@@ -46,6 +46,15 @@ st.markdown("""
     .metric-delta-up { font-size: 0.7rem; color: #5DCB7A; margin-top: 2px; }
     .metric-delta-neutral { font-size: 0.7rem; color: #4A9FD4; margin-top: 2px; }
 
+    @media (max-width: 768px) {
+        .metrics-row { grid-template-columns: repeat(2, 1fr) !important; }
+        .metric-value { font-size: 1.2rem !important; }
+        .main-title { font-size: 1.3rem !important; }
+        .main-subtitle { font-size: 0.7rem !important; }
+    }            
+
+
+
     .stTabs [data-baseweb="tab-list"] { background: #162330; border-radius: 10px; padding: 4px; gap: 4px; border: 1px solid #1E3A50; }
     .stTabs [data-baseweb="tab"] { background: transparent; color: #7A9BB0; border-radius: 8px; padding: 8px 16px; font-size: 0.85rem; font-weight: 500; }
     .stTabs [aria-selected="true"] { background: #1A3A5C !important; color: #FFFFFF !important; }
@@ -210,6 +219,8 @@ MENU = [
 with st.sidebar:
     st.markdown("### 🛢️ OilAI")
     st.divider()
+    st.caption("📱 En celular: tocá el **>** o **☰** arriba a la izquierda para ver todos los módulos.")
+
     # Instrucción para mobile
     st.caption("📱 **En celular:** tocá el **☰** arriba a la izquierda para ver los módulos.")
     for categoria, items in MENU:
