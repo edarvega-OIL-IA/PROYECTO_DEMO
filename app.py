@@ -92,7 +92,8 @@ st.markdown("""
     }
 
     .footer { text-align: center; color: #3A5A70; font-size: 0.75rem; padding: 1rem 0; border-top: 1px solid #1E3A50; margin-top: 2rem; letter-spacing: 0.05em; }
-
+    header[data-testid="stHeader"] { display: none !important; }
+    
     .streamlit-expanderHeader { background: #162330 !important; color: #C8D8E4 !important; border: 1px solid #1E3A50 !important; border-radius: 8px !important; }
 
     .stTextInput > div > div > input,
