@@ -46,15 +46,6 @@ st.markdown("""
     .metric-delta-up { font-size: 0.7rem; color: #5DCB7A; margin-top: 2px; }
     .metric-delta-neutral { font-size: 0.7rem; color: #4A9FD4; margin-top: 2px; }
 
-    @media (max-width: 768px) {
-        .metrics-row { grid-template-columns: repeat(2, 1fr) !important; }
-        .metric-value { font-size: 1.2rem !important; }
-        .main-title { font-size: 1.3rem !important; }
-        .main-subtitle { font-size: 0.7rem !important; }
-    }            
-
-
-
     .stTabs [data-baseweb="tab-list"] { background: #162330; border-radius: 10px; padding: 4px; gap: 4px; border: 1px solid #1E3A50; }
     .stTabs [data-baseweb="tab"] { background: transparent; color: #7A9BB0; border-radius: 8px; padding: 8px 16px; font-size: 0.85rem; font-weight: 500; }
     .stTabs [aria-selected="true"] { background: #1A3A5C !important; color: #FFFFFF !important; }
@@ -147,18 +138,86 @@ st.markdown("""
     .stSpinner > div { border-top-color: #4A9FD4 !important; }
     .stProgress > div > div { background: #2A6496 !important; }
 
-    /* ── Evitar traducción automática ── */
-    .main-header, .main-title, .main-subtitle, .main-badge {
-        -webkit-user-select: none;
+    /* ── Mobile welcome screen ── */
+    .mobile-welcome {
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 85vh;
+        padding: 2rem 1.5rem;
+        text-align: center;
+        gap: 1rem;
     }
-    [translate="no"] { translate: no; }
+    .mobile-title { font-size: 2.2rem; font-weight: 800; color: #FFFFFF; margin: 0; }
+    .mobile-title span { color: #4A9FD4; }
+    .mobile-subtitle { font-size: 0.85rem; color: #8AABB8; letter-spacing: 0.06em; text-transform: uppercase; }
+    .mobile-badge { background: #1E4D2B; color: #5DCB7A; font-size: 0.75rem; padding: 3px 14px; border-radius: 20px; border: 1px solid #2A7A40; }
+    .mobile-divider { width: 60%; border: none; border-top: 1px solid #1E3A50; margin: 0.5rem 0; }
+    .mobile-modulos { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+    .mobile-modulo {
+        background: #162330;
+        border: 1px solid #1E3A50;
+        border-left: 3px solid #2A6496;
+        border-radius: 8px;
+        padding: 10px 14px;
+        text-align: left;
+        font-size: 0.85rem;
+        color: #FFFFFF;
+    }
+    .mobile-modulo span { color: #8AABB8; font-size: 0.78rem; display: block; margin-top: 2px; }
+    .mobile-cta {
+        background: #1A3A5C;
+        border: 1px solid #2A6496;
+        border-radius: 10px;
+        padding: 16px 20px;
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+    .mobile-cta p { margin: 0; color: #8AABB8; font-size: 0.8rem; }
+    .mobile-cta a { color: #4A9FD4; font-size: 1.1rem; font-weight: 700; text-decoration: none; }
+    .mobile-pc { background: #0D2A1A; border: 1px solid #2A7A40; border-radius: 10px; padding: 12px 16px; width: 100%; color: #5DCB7A; font-size: 0.82rem; }
+    @media (max-width: 768px) {
+        .mobile-welcome { display: flex !important; }
+        .desktop-only { display: none !important; }
+    }
+    @media (min-width: 769px) {
+        .mobile-welcome { display: none !important; }
+        .desktop-only { display: block !important; }
+    }
 
-    header[data-testid="stHeader"] { display: none !important; }
 </style>
 """, unsafe_allow_html=True)
 
 
 
+
+# ── Pantalla mobile ──
+st.markdown("""
+<div class="mobile-welcome">
+    <div style="font-size:3rem;">🛢️</div>
+    <div class="mobile-title">Oil<span>AI</span></div>
+    <div class="mobile-subtitle">Inteligencia Artificial · Oil &amp; Gas · Vaca Muerta</div>
+    <div class="mobile-badge">⚡ Eduardo Ariel Vega by Claude AI</div>
+    <hr class="mobile-divider">
+    <div class="mobile-modulos">
+        <div class="mobile-modulo">📄 ContractAI <span>Analizá contratos con operadoras en segundos</span></div>
+        <div class="mobile-modulo">💰 PresupuestosAI <span>Generá presupuestos técnicos completos con IA</span></div>
+        <div class="mobile-modulo">🚨 HSE Pro <span>Reportes de incidentes formato Shell/Peduzzi</span></div>
+        <div class="mobile-modulo">📋 LicitacionesAI <span>Comparador de pliegos con ranking automático</span></div>
+        <div class="mobile-modulo">🌐 TrackingAI <span>Seguimiento de embarques internacionales</span></div>
+        <div class="mobile-modulo">📊 DataAI <span>Consultá datos de pozos en lenguaje natural</span></div>
+    </div>
+    <div class="mobile-cta">
+        <p>📞 Consultas y demo personalizada</p>
+        <a href="tel:+543517592780">(351) 759-2780</a>
+    </div>
+    <div class="mobile-pc">
+        💻 Para ver el demo completo, ingresá desde una <strong>PC o notebook</strong>
+    </div>
+</div>
+<div class="desktop-only">
+""", unsafe_allow_html=True)
 
 # ── Header ──
 st.markdown("""
@@ -167,7 +226,7 @@ st.markdown("""
     <div class="main-subtitle" translate="no">
         INTELIGENCIA ARTIFICIAL PARA OIL &amp; GAS · VACA MUERTA, NEUQUÉN
     </div>
-    <div class="main-badge" translate="no">⚡ Eduardo Ariel Vega</div>
+    <div class="main-badge" translate="no">⚡ Eduardo Ariel Vega by Claude AI</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -219,10 +278,6 @@ MENU = [
 with st.sidebar:
     st.markdown("### 🛢️ OilAI")
     st.divider()
-    st.caption("📱 En celular: tocá el **>** o **☰** arriba a la izquierda para ver todos los módulos.")
-
-    # Instrucción para mobile
-    st.caption("📱 **En celular:** tocá el **☰** arriba a la izquierda para ver los módulos.")
     for categoria, items in MENU:
         st.markdown(
             f"<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;"
@@ -817,14 +872,14 @@ elif "ChatDoc" in seleccion:
 # TAB 6: HSE Pro
 # ════════════════════════════════════════
 elif "HSE Pro" in seleccion:
-    st.subheader("🦺 HSE Pro — Formato Actualizado")
+    st.subheader("🦺 HSE Pro — Formato Shell / Peduzzi")
     st.caption("Generador de reportes HSE con el formato estándar usado por Shell, YPF y empresas contratistas de Vaca Muerta.")
 
     col1, col2 = st.columns(2)
     with col1:
-        st.info("📋 **Reporte Preliminar** — para Near Miss y Casi-Accidentes (formato RG-11-01 Actualizado)")
+        st.info("📋 **Reporte Preliminar** — para Near Miss y Casi-Accidentes (formato RG-11-01 Shell)")
     with col2:
-        st.warning("📋 **Reporte de Investigación** — para accidentes con lesiones (formato F01 PG-14 Actualizado)")
+        st.warning("📋 **Reporte de Investigación** — para accidentes con lesiones (formato F01 PG-14 Peduzzi)")
 
     st.divider()
 
@@ -982,7 +1037,7 @@ elif "HSE Pro" in seleccion:
         with open(ruta_tmp, "rb") as f:
             contenido = f.read()
         st.download_button(
-            label="💾 Descargar reporte Word (formato Actualizado)",
+            label="💾 Descargar reporte Word (formato Shell/Peduzzi)",
             data=contenido,
             file_name=nombre_word,
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
@@ -1008,7 +1063,8 @@ elif "Tracking" in seleccion:
 
 # ── Footer ──
 st.markdown("""
+</div>
 <div class="footer">
-    OilAI · Desarrollado por Eduardo Ariel Vega · Vaca Muerta, Neuquén · 2026
+    OilAI · Desarrollado por Eduardo Ariel Vega con Claude IA · Vaca Muerta, Neuquén · 2026
 </div>
 """, unsafe_allow_html=True)
