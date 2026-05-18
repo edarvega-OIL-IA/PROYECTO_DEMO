@@ -13,13 +13,12 @@ from presupuestos import presupuestos_page
 from tracking import tracking_page
 
 
-
 # ── Configuración ──
 st.set_page_config(
     page_title="OilAI — Asistente para Vaca Muerta",
     page_icon="🛢️",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="auto"
 )
 
 
@@ -80,7 +79,6 @@ st.markdown("""
     [data-testid="stDataFrame"] { background: #162330 !important; }
     .stSpinner > div { border-top-color: #4A9FD4 !important; }
     .stProgress > div > div { background: #2A6496 !important; }
-    [data-testid="stSidebar"] { display: none; }
 
     /* ── Evitar traducción automática ── */
     .main-header, .main-title, .main-subtitle, .main-badge {
@@ -141,49 +139,30 @@ st.markdown("""
 
 st.divider()
 
-# ── Tabs ──
-#tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-#    "📄 ContractAI – Análisis de contratos",
-#    "📊 DataAI – Consulta de datos",
-#    "🦺 HSE – Reporte de incidentes",
-#    "🏆 Licitaciones – Comparador",
-#    "💬 ChatDoc – Chat con documentos",
-#    "🚨 HSE Pro – Formato Shell/Peduzzi",
-#    "💰 PresupuestosAI – Presupuestos",
-#    "🌐 TrackingAI – Embarques",
-#])
-
 # ── Menú lateral ──────────────────────────────────────────────────────────
 with st.sidebar:
     st.markdown("### 🛢️ OilAI")
-    st.markdown("---")
-
-    st.markdown("**📁 Documentos**")
-    modulo = st.radio("", [
-        "📄 ContractAI",
-        "📋 LicitacionesAI",
-        "💬 ChatDoc",
-    ], label_visibility="collapsed", key="menu_docs")
-
-    st.markdown("**⚙️ Operaciones**")
-    modulo2 = st.radio("", [
-        "💰 PresupuestosAI",
-        "🌐 TrackingAI",
-        "📊 DataAI",
-    ], label_visibility="collapsed", key="menu_ops")
-
-    st.markdown("**🦺 Seguridad**")
-    modulo3 = st.radio("", [
-        "🦺 HSE",
-        "🚨 HSE Pro",
-    ], label_visibility="collapsed", key="menu_hse")
-
+    st.divider()
+    seleccion = st.radio(
+        "Módulos",
+        [
+            "📄 ContractAI",
+            "📋 LicitacionesAI",
+            "💬 ChatDoc",
+            "💰 PresupuestosAI",
+            "🌐 TrackingAI",
+            "📊 DataAI",
+            "🦺 HSE",
+            "🚨 HSE Pro",
+        ],
+        label_visibility="collapsed"
+    )
 
 
 # ════════════════════════════════════════
 # TAB 1: ContractAI
 # ════════════════════════════════════════
-with tab1:
+if "ContractAI" in seleccion:
     st.subheader("Analizá contratos y licitaciones de Oil & Gas")
     st.caption("Subí un PDF y ContractAI identificará riesgos, obligaciones y recomendaciones.")
 
@@ -262,7 +241,7 @@ with tab1:
 # ════════════════════════════════════════
 # TAB 2: DataAI
 # ════════════════════════════════════════
-with tab2:
+elif "DataAI" in seleccion:
     st.subheader("Consultá datos de pozos en lenguaje natural")
     st.caption("Hacé preguntas sobre producción, incidentes HSE y operaciones.")
 
@@ -334,7 +313,7 @@ with tab2:
 # ════════════════════════════════════════
 # TAB 3: HSE
 # ════════════════════════════════════════
-with tab3:
+elif "HSE" in seleccion and "Pro" not in seleccion:
     st.subheader("Generador de reportes HSE")
     st.caption("Describí el incidente en lenguaje natural y el sistema genera el reporte formal automáticamente.")
 
@@ -495,7 +474,7 @@ with tab3:
 # ════════════════════════════════════════
 # TAB 4: Licitaciones
 # ════════════════════════════════════════
-with tab4:
+elif "Licitaciones" in seleccion:
     st.subheader("Comparador de licitaciones Oil & Gas")
     st.caption("Subí 2 o más pliegos en PDF y el sistema te dice cuál conviene más presentar.")
 
@@ -613,7 +592,7 @@ with tab4:
 # ════════════════════════════════════════
 # TAB 5: ChatDoc
 # ════════════════════════════════════════
-with tab5:
+elif "ChatDoc" in seleccion:
     st.subheader("💬 Chat con tus documentos")
     st.caption("Subí cualquier manual, contrato o procedimiento y hacele preguntas en lenguaje natural.")
 
@@ -757,7 +736,7 @@ with tab5:
 # ════════════════════════════════════════
 # TAB 6: HSE Pro
 # ════════════════════════════════════════
-with tab6:
+elif "HSE Pro" in seleccion:
     st.subheader("🦺 HSE Pro — Formato Shell / Peduzzi")
     st.caption("Generador de reportes HSE con el formato estándar usado por Shell, YPF y empresas contratistas de Vaca Muerta.")
 
@@ -941,13 +920,10 @@ with tab6:
 # ════════════════════════════════════════
 # TAB 7 PresupuestosAI – Presupuestos
 # ════════════════════════════════════════
-with tab7:
+elif "Presupuestos" in seleccion:
     presupuestos_page()
 
-# ════════════════════════════════════════
-# TAB 8 TrackingAI – Embarques
-# ════════════════════════════════════════
-with tab8:
+elif "Tracking" in seleccion:
     tracking_page()
 
 # ── Footer ──
