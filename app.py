@@ -74,26 +74,26 @@ st.markdown("""
     [data-testid="stSidebar"] h2,
     [data-testid="stSidebar"] h3 { color: #FFFFFF !important; font-size: 1rem !important; }
     [data-testid="stSidebar"] hr { border-color: #1E3A50 !important; }
-    [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] p,
-    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] p {
-        text-align: left !important;
-        width: 100% !important;
-    }
-            
-
 
     /* Botones del menú — inactivo */
     [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
         background: transparent !important;
         border: none !important;
         color: #8AABB8 !important;
-        text-align: left !important;
+        display: flex !important;
+        align-items: center !important;
         justify-content: flex-start !important;
         font-size: 0.84rem !important;
-        padding: 5px 10px !important;
+        padding: 5px 8px !important;
         border-radius: 6px !important;
         width: 100% !important;
         box-shadow: none !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] *,
+    [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] p {
+        text-align: left !important;
+        justify-content: flex-start !important;
+        margin: 0 !important;
     }
     [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:hover {
         background: #1A3A5C !important;
@@ -106,14 +106,20 @@ st.markdown("""
         border: none !important;
         border-left: 2px solid #4A9FD4 !important;
         color: #4A9FD4 !important;
-        text-align: left !important;
+        display: flex !important;
+        align-items: center !important;
         justify-content: flex-start !important;
-        padding-left: 8px !important;
         font-size: 0.84rem !important;
-        padding: 5px 10px !important;
+        padding: 5px 8px !important;
         border-radius: 0 6px 6px 0 !important;
         width: 100% !important;
         box-shadow: none !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] *,
+    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] p {
+        text-align: left !important;
+        justify-content: flex-start !important;
+        margin: 0 !important;
     }
 
     .footer { text-align: center; color: #3A5A70; font-size: 0.75rem; padding: 1rem 0; border-top: 1px solid #1E3A50; margin-top: 2rem; letter-spacing: 0.05em; }
