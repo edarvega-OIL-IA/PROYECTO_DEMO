@@ -113,7 +113,6 @@ st.markdown("""
     }
     [translate="no"] { translate: no; }
 
-    header[data-testid="stHeader"] { display: none !important; }
 
 </style>
 """, unsafe_allow_html=True)
@@ -171,9 +170,22 @@ st.divider()
 if 'active_group' not in st.session_state:
     st.session_state['active_group'] = 'docs'
 
-def _on_docs(): st.session_state['active_group'] = 'docs'
-def _on_ops():  st.session_state['active_group'] = 'ops'
-def _on_hse():  st.session_state['active_group'] = 'hse'
+def _on_docs():
+    st.session_state['active_group'] = 'docs'
+    st.session_state.pop('g_ops', None)
+    st.session_state.pop('g_hse', None)
+
+def _on_ops():
+    st.session_state['active_group'] = 'ops'
+    st.session_state.pop('g_docs', None)
+    st.session_state.pop('g_hse', None)
+
+def _on_hse():
+    st.session_state['active_group'] = 'hse'
+    st.session_state.pop('g_docs', None)
+    st.session_state.pop('g_ops', None)
+
+group = st.session_state['active_group']
 
 with st.sidebar:
     st.markdown("### 🛢️ OilAI")
@@ -181,20 +193,22 @@ with st.sidebar:
 
     st.markdown("<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;font-weight:600;margin-bottom:4px;'>DOCUMENTOS</p>", unsafe_allow_html=True)
     st.radio("", ["📄 ContractAI", "📋 LicitacionesAI", "💬 ChatDoc"],
-             key="g_docs", label_visibility="collapsed", on_change=_on_docs)
+             key="g_docs", index=(0 if group == 'docs' else None),
+             label_visibility="collapsed", on_change=_on_docs)
 
     st.markdown("<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;font-weight:600;margin:12px 0 4px;'>OPERACIONES</p>", unsafe_allow_html=True)
     st.radio("", ["💰 PresupuestosAI", "🌐 TrackingAI", "📊 DataAI"],
-             key="g_ops", label_visibility="collapsed", on_change=_on_ops)
+             key="g_ops", index=(0 if group == 'ops' else None),
+             label_visibility="collapsed", on_change=_on_ops)
 
     st.markdown("<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;font-weight:600;margin:12px 0 4px;'>SEGURIDAD</p>", unsafe_allow_html=True)
     st.radio("", ["🦺 HSE", "🚨 HSE Pro"],
-             key="g_hse", label_visibility="collapsed", on_change=_on_hse)
+             key="g_hse", index=(0 if group == 'hse' else None),
+             label_visibility="collapsed", on_change=_on_hse)
 
-group = st.session_state['active_group']
-if   group == 'docs': seleccion = st.session_state.get('g_docs', '📄 ContractAI')
-elif group == 'ops':  seleccion = st.session_state.get('g_ops',  '💰 PresupuestosAI')
-else:                 seleccion = st.session_state.get('g_hse',  '🦺 HSE')
+if   group == 'docs': seleccion = st.session_state.get('g_docs') or '📄 ContractAI'
+elif group == 'ops':  seleccion = st.session_state.get('g_ops')  or '💰 PresupuestosAI'
+else:                 seleccion = st.session_state.get('g_hse')  or '🦺 HSE'
 
 
 # ════════════════════════════════════════
