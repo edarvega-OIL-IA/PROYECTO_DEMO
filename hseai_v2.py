@@ -207,7 +207,7 @@ Solo pedí lo que realmente falte en la descripción.
         return None
 
 def generar_reporte_hse_v2(descripcion_completa):
-    """Genera reporte HSE con formato Shell/Peduzzi actualizado."""
+    """Genera reporte HSE con formato actualizado."""
 
     causas_str = json.dumps(CAUSAS_RAIZ, ensure_ascii=False)
 
@@ -499,7 +499,7 @@ def generar_word_preliminar(datos, ruta_salida):
     doc.save(ruta_salida)
 
 def generar_word_investigacion(datos, ruta_salida):
-    """Genera informe de investigación completo estilo Peduzzi F01 PG-14."""
+    """Genera informe de investigación completo estilo F01 PG-14."""
     doc = Document()
 
     section = doc.sections[0]
@@ -724,7 +724,7 @@ def generar_word_investigacion(datos, ruta_salida):
     doc.add_paragraph()
     pie = doc.add_paragraph(
         "Reporte generado por OilAI HSE Pro v2 — "
-        "Formato Shell/Peduzzi actualizado · Vaca Muerta, Neuquén · 2026"
+        "Formato actualizado · Vaca Muerta, Neuquén · 2026"
     )
     pie.alignment = WD_ALIGN_PARAGRAPH.CENTER
     pie.runs[0].font.size = Pt(8)
