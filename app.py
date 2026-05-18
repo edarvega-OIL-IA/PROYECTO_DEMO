@@ -69,26 +69,43 @@ st.markdown("""
         background-color: #0D1920 !important;
         border-right: 1px solid #1E3A50 !important;
     }
-    [data-testid="stSidebar"] .stMarkdown p,
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] .stRadio label { color: #8AABB8 !important; font-size: 0.82rem !important; }
+    [data-testid="stSidebar"] .stMarkdown p { color: #8AABB8 !important; font-size: 0.82rem !important; }
     [data-testid="stSidebar"] h1,
     [data-testid="stSidebar"] h2,
     [data-testid="stSidebar"] h3 { color: #FFFFFF !important; font-size: 1rem !important; }
     [data-testid="stSidebar"] hr { border-color: #1E3A50 !important; }
-    [data-testid="stSidebar"] [data-testid="stRadio"] { gap: 2px !important; }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label {
-        padding: 6px 10px !important;
+
+    /* Botones del menú — inactivo */
+    [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"] {
+        background: transparent !important;
+        border: none !important;
+        color: #8AABB8 !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
+        font-size: 0.84rem !important;
+        padding: 5px 10px !important;
         border-radius: 6px !important;
-        transition: background 0.15s !important;
+        width: 100% !important;
+        box-shadow: none !important;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+    [data-testid="stSidebar"] [data-testid="stBaseButton-secondary"]:hover {
         background: #1A3A5C !important;
         color: #FFFFFF !important;
+        border: none !important;
     }
-    [data-testid="stSidebar"] [data-testid="stRadio"] [aria-checked="true"] + div label,
-    [data-testid="stSidebar"] [data-testid="stRadio"] input:checked ~ div {
+    /* Botones del menú — activo */
+    [data-testid="stSidebar"] [data-testid="stBaseButton-primary"] {
+        background: #162330 !important;
+        border: none !important;
+        border-left: 2px solid #4A9FD4 !important;
         color: #4A9FD4 !important;
+        text-align: left !important;
+        justify-content: flex-start !important;
+        font-size: 0.84rem !important;
+        padding: 5px 10px !important;
+        border-radius: 0 6px 6px 0 !important;
+        width: 100% !important;
+        box-shadow: none !important;
     }
 
     .footer { text-align: center; color: #3A5A70; font-size: 0.75rem; padding: 1rem 0; border-top: 1px solid #1E3A50; margin-top: 2rem; letter-spacing: 0.05em; }
@@ -167,48 +184,32 @@ st.markdown("""
 st.divider()
 
 # ── Menú lateral ──────────────────────────────────────────────────────────
-if 'active_group' not in st.session_state:
-    st.session_state['active_group'] = 'docs'
+if 'seleccion' not in st.session_state:
+    st.session_state['seleccion'] = '📄 ContractAI'
 
-def _on_docs():
-    st.session_state['active_group'] = 'docs'
-    st.session_state.pop('g_ops', None)
-    st.session_state.pop('g_hse', None)
-
-def _on_ops():
-    st.session_state['active_group'] = 'ops'
-    st.session_state.pop('g_docs', None)
-    st.session_state.pop('g_hse', None)
-
-def _on_hse():
-    st.session_state['active_group'] = 'hse'
-    st.session_state.pop('g_docs', None)
-    st.session_state.pop('g_ops', None)
-
-group = st.session_state['active_group']
+MENU = [
+    ('DOCUMENTOS',  ['📄 ContractAI', '📋 LicitacionesAI', '💬 ChatDoc']),
+    ('OPERACIONES', ['💰 PresupuestosAI', '🌐 TrackingAI', '📊 DataAI']),
+    ('SEGURIDAD',   ['🦺 HSE', '🚨 HSE Pro']),
+]
 
 with st.sidebar:
     st.markdown("### 🛢️ OilAI")
     st.divider()
+    for categoria, items in MENU:
+        st.markdown(
+            f"<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;"
+            f"font-weight:600;margin:10px 0 2px;'>{categoria}</p>",
+            unsafe_allow_html=True
+        )
+        for item in items:
+            activo = st.session_state['seleccion'] == item
+            if st.button(item, key=f"nav_{item}", use_container_width=True,
+                         type="primary" if activo else "secondary"):
+                st.session_state['seleccion'] = item
+                st.rerun()
 
-    st.markdown("<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;font-weight:600;margin-bottom:4px;'>DOCUMENTOS</p>", unsafe_allow_html=True)
-    st.radio("", ["📄 ContractAI", "📋 LicitacionesAI", "💬 ChatDoc"],
-             key="g_docs", index=(0 if group == 'docs' else None),
-             label_visibility="collapsed", on_change=_on_docs)
-
-    st.markdown("<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;font-weight:600;margin:12px 0 4px;'>OPERACIONES</p>", unsafe_allow_html=True)
-    st.radio("", ["💰 PresupuestosAI", "🌐 TrackingAI", "📊 DataAI"],
-             key="g_ops", index=(0 if group == 'ops' else None),
-             label_visibility="collapsed", on_change=_on_ops)
-
-    st.markdown("<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;font-weight:600;margin:12px 0 4px;'>SEGURIDAD</p>", unsafe_allow_html=True)
-    st.radio("", ["🦺 HSE", "🚨 HSE Pro"],
-             key="g_hse", index=(0 if group == 'hse' else None),
-             label_visibility="collapsed", on_change=_on_hse)
-
-if   group == 'docs': seleccion = st.session_state.get('g_docs') or '📄 ContractAI'
-elif group == 'ops':  seleccion = st.session_state.get('g_ops')  or '💰 PresupuestosAI'
-else:                 seleccion = st.session_state.get('g_hse')  or '🦺 HSE'
+seleccion = st.session_state['seleccion']
 
 
 # ════════════════════════════════════════
