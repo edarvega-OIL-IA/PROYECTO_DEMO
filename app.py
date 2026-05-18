@@ -30,21 +30,21 @@ st.markdown("""
     .main-header {
         background: linear-gradient(135deg, #1A3A5C 0%, #0F1923 60%, #1A2A1A 100%);
         border-bottom: 2px solid #2A6496;
-        padding: 2rem 2rem 1.5rem;
-        margin: -1rem -1rem 2rem -1rem;
+        padding: 0.8rem 2rem 0.6rem;
+        margin: -1rem -1rem 1rem -1rem;
         text-align: center;
     }
-    .main-title { font-size: 2.8rem; font-weight: 800; color: #FFFFFF; letter-spacing: 0.05em; margin: 0; }
+    .main-title { font-size: 1.8rem; font-weight: 800; color: #FFFFFF; letter-spacing: 0.05em; margin: 0; }
     .main-title span { color: #4A9FD4; }
-    .main-subtitle { font-size: 1rem; color: #8AABB8; margin-top: 0.4rem; letter-spacing: 0.08em; text-transform: uppercase; }
-    .main-badge { display: inline-block; background: #1E4D2B; color: #5DCB7A; font-size: 0.75rem; padding: 3px 12px; border-radius: 20px; margin-top: 0.5rem; border: 1px solid #2A7A40; letter-spacing: 0.05em; }
+    .main-subtitle { font-size: 0.78rem; color: #8AABB8; margin-top: 0.2rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .main-badge { display: inline-block; background: #1E4D2B; color: #5DCB7A; font-size: 0.7rem; padding: 2px 10px; border-radius: 20px; margin-top: 0.3rem; border: 1px solid #2A7A40; letter-spacing: 0.05em; }
 
-    .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 1.5rem; }
-    .metric-card { background: #162330; border: 1px solid #1E3A50; border-radius: 10px; padding: 1rem 1.25rem; text-align: center; border-top: 3px solid #2A6496; }
-    .metric-value { font-size: 2rem; font-weight: 700; color: #FFFFFF; margin: 0; }
-    .metric-label { font-size: 0.75rem; color: #7A9BB0; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 4px; }
-    .metric-delta-up { font-size: 0.75rem; color: #5DCB7A; margin-top: 4px; }
-    .metric-delta-neutral { font-size: 0.75rem; color: #4A9FD4; margin-top: 4px; }
+    .metrics-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 0.8rem; }
+    .metric-card { background: #162330; border: 1px solid #1E3A50; border-radius: 10px; padding: 0.6rem 1rem; text-align: center; border-top: 3px solid #2A6496; }
+    .metric-value { font-size: 1.5rem; font-weight: 700; color: #FFFFFF; margin: 0; }
+    .metric-label { font-size: 0.7rem; color: #7A9BB0; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 2px; }
+    .metric-delta-up { font-size: 0.7rem; color: #5DCB7A; margin-top: 2px; }
+    .metric-delta-neutral { font-size: 0.7rem; color: #4A9FD4; margin-top: 2px; }
 
     .stTabs [data-baseweb="tab-list"] { background: #162330; border-radius: 10px; padding: 4px; gap: 4px; border: 1px solid #1E3A50; }
     .stTabs [data-baseweb="tab"] { background: transparent; color: #7A9BB0; border-radius: 8px; padding: 8px 16px; font-size: 0.85rem; font-weight: 500; }
@@ -92,8 +92,7 @@ st.markdown("""
     }
 
     .footer { text-align: center; color: #3A5A70; font-size: 0.75rem; padding: 1rem 0; border-top: 1px solid #1E3A50; margin-top: 2rem; letter-spacing: 0.05em; }
-    header[data-testid="stHeader"] { display: none !important; }
-    
+
     .streamlit-expanderHeader { background: #162330 !important; color: #C8D8E4 !important; border: 1px solid #1E3A50 !important; border-radius: 8px !important; }
 
     .stTextInput > div > div > input,
@@ -168,23 +167,33 @@ st.markdown("""
 st.divider()
 
 # ── Menú lateral ──────────────────────────────────────────────────────────
+if 'active_group' not in st.session_state:
+    st.session_state['active_group'] = 'docs'
+
+def _on_docs(): st.session_state['active_group'] = 'docs'
+def _on_ops():  st.session_state['active_group'] = 'ops'
+def _on_hse():  st.session_state['active_group'] = 'hse'
+
 with st.sidebar:
     st.markdown("### 🛢️ OilAI")
     st.divider()
-    seleccion = st.radio(
-        "Módulos",
-        [
-            "📄 ContractAI",
-            "📋 LicitacionesAI",
-            "💬 ChatDoc",
-            "💰 PresupuestosAI",
-            "🌐 TrackingAI",
-            "📊 DataAI",
-            "🦺 HSE",
-            "🚨 HSE Pro",
-        ],
-        label_visibility="collapsed"
-    )
+
+    st.markdown("<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;font-weight:600;margin-bottom:4px;'>DOCUMENTOS</p>", unsafe_allow_html=True)
+    st.radio("", ["📄 ContractAI", "📋 LicitacionesAI", "💬 ChatDoc"],
+             key="g_docs", label_visibility="collapsed", on_change=_on_docs)
+
+    st.markdown("<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;font-weight:600;margin:12px 0 4px;'>OPERACIONES</p>", unsafe_allow_html=True)
+    st.radio("", ["💰 PresupuestosAI", "🌐 TrackingAI", "📊 DataAI"],
+             key="g_ops", label_visibility="collapsed", on_change=_on_ops)
+
+    st.markdown("<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;font-weight:600;margin:12px 0 4px;'>SEGURIDAD</p>", unsafe_allow_html=True)
+    st.radio("", ["🦺 HSE", "🚨 HSE Pro"],
+             key="g_hse", label_visibility="collapsed", on_change=_on_hse)
+
+group = st.session_state['active_group']
+if   group == 'docs': seleccion = st.session_state.get('g_docs', '📄 ContractAI')
+elif group == 'ops':  seleccion = st.session_state.get('g_ops',  '💰 PresupuestosAI')
+else:                 seleccion = st.session_state.get('g_hse',  '🦺 HSE')
 
 
 # ════════════════════════════════════════
