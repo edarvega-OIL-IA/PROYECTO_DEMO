@@ -18,7 +18,7 @@ st.set_page_config(
     page_title="OilAI — Asistente para Vaca Muerta",
     page_icon="🛢️",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="auto"
 )
 
 
@@ -210,6 +210,8 @@ MENU = [
 with st.sidebar:
     st.markdown("### 🛢️ OilAI")
     st.divider()
+    # Instrucción para mobile
+    st.caption("📱 **En celular:** tocá el **☰** arriba a la izquierda para ver los módulos.")
     for categoria, items in MENU:
         st.markdown(
             f"<p style='font-size:0.7rem;color:#4A9FD4;letter-spacing:.1em;"
