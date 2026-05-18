@@ -64,6 +64,33 @@ st.markdown("""
 
     hr { border-color: #1E3A50 !important; }
 
+    /* ── Sidebar ── */
+    [data-testid="stSidebar"] {
+        background-color: #0D1920 !important;
+        border-right: 1px solid #1E3A50 !important;
+    }
+    [data-testid="stSidebar"] .stMarkdown p,
+    [data-testid="stSidebar"] label,
+    [data-testid="stSidebar"] .stRadio label { color: #8AABB8 !important; font-size: 0.82rem !important; }
+    [data-testid="stSidebar"] h1,
+    [data-testid="stSidebar"] h2,
+    [data-testid="stSidebar"] h3 { color: #FFFFFF !important; font-size: 1rem !important; }
+    [data-testid="stSidebar"] hr { border-color: #1E3A50 !important; }
+    [data-testid="stSidebar"] [data-testid="stRadio"] { gap: 2px !important; }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label {
+        padding: 6px 10px !important;
+        border-radius: 6px !important;
+        transition: background 0.15s !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] label:hover {
+        background: #1A3A5C !important;
+        color: #FFFFFF !important;
+    }
+    [data-testid="stSidebar"] [data-testid="stRadio"] [aria-checked="true"] + div label,
+    [data-testid="stSidebar"] [data-testid="stRadio"] input:checked ~ div {
+        color: #4A9FD4 !important;
+    }
+
     .footer { text-align: center; color: #3A5A70; font-size: 0.75rem; padding: 1rem 0; border-top: 1px solid #1E3A50; margin-top: 2rem; letter-spacing: 0.05em; }
 
     .streamlit-expanderHeader { background: #162330 !important; color: #C8D8E4 !important; border: 1px solid #1E3A50 !important; border-radius: 8px !important; }
