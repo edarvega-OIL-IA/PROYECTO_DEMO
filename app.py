@@ -9,6 +9,8 @@ import hseai_v2
 import licitaciones as licitai
 import chatdoc
 from utils import timestamp
+from presupuestos import presupuestos_page
+
 
 # ── Configuración ──
 st.set_page_config(
@@ -138,14 +140,16 @@ st.markdown("""
 st.divider()
 
 # ── Tabs ──
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
-    "📄 ContractAI — Análisis de contratos",
-    "📊 DataAI — Consulta de datos",
-    "🦺 HSE — Reporte de incidentes",
-    "🏆 Licitaciones — Comparador",
-    "💬 ChatDoc — Chat con documentos",
-    "🦺 HSE Pro — Formato Shell/Peduzzi"
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+    "📄 ContractAI – Análisis de contratos",
+    "📊 DataAI – Consulta de datos",
+    "🦺 HSE – Reporte de incidentes",
+    "🏆 Licitaciones – Comparador",
+    "💬 ChatDoc – Chat con documentos",
+    "🚨 HSE Pro – Formato Shell/Peduzzi",
+    "💰 PresupuestosAI – Presupuestos",     # ← nuevo
 ])
+
 
 # ════════════════════════════════════════
 # TAB 1: ContractAI
@@ -905,6 +909,11 @@ with tab6:
             st.session_state.hsev2_datos = None
             st.rerun()
 
+# ════════════════════════════════════════
+# TAB 7 PresupuestosAI – Presupuestos
+# ════════════════════════════════════════
+with tab7:
+    presupuestos_page()
 
 # ── Footer ──
 st.markdown("""
