@@ -167,7 +167,7 @@ st.markdown("""
     <div class="main-subtitle" translate="no">
         INTELIGENCIA ARTIFICIAL PARA OIL &amp; GAS · VACA MUERTA, NEUQUÉN
     </div>
-    <div class="main-badge" translate="no">⚡ Eduardo Ariel Vega by Claude AI</div>
+    <div class="main-badge" translate="no">⚡ Eduardo Ariel Vega</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -1009,6 +1009,6 @@ elif "Tracking" in seleccion:
 # ── Footer ──
 st.markdown("""
 <div class="footer">
-    OilAI · Desarrollado por Eduardo Ariel Vega con Claude IA · Vaca Muerta, Neuquén · 2026
+    OilAI · Desarrollado por Eduardo Ariel Vega · Vaca Muerta, Neuquén · 2026
 </div>
 """, unsafe_allow_html=True)
