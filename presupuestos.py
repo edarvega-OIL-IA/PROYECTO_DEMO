@@ -306,10 +306,12 @@ def generar_pdf(data, empresa_emisora, empresa_cliente, lugar, fecha, validez, m
 
     # Título
     story.append(Paragraph('PRESUPUESTO', estilo_titulo))
+    story.append(Spacer(1, 0.2*cm))
     story.append(Paragraph(
         f"N° {data['numero_presupuesto']}   |   Fecha: {fecha}   |   Validez: {validez} días",
         estilo_sub
     ))
+
     story.append(HRFlowable(width='100%', thickness=1, color=AZUL))
     story.append(Spacer(1, 0.3*cm))
 
@@ -414,14 +416,13 @@ def generar_pdf(data, empresa_emisora, empresa_cliente, lugar, fecha, validez, m
 
     # Firma
     story.append(HRFlowable(width='45%', thickness=0.7, color=AZUL, hAlign='CENTER'))
-    story.append(Paragraph('Servicios OIL IA', ParagraphStyle('firma', fontSize=9,
+    story.append(Paragraph(empresa_emisora, ParagraphStyle('firma', fontSize=9,
                             alignment=TA_CENTER, fontName='Helvetica-Bold')))
     story.append(Spacer(1, 0.3*cm))
 
     doc.build(story)
     buf.seek(0)
     return buf
-
 
 # ═══════════════════════════════════════════════════════════════════════════
 # 5. PÁGINA PRINCIPAL DE STREAMLIT
