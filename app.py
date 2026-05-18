@@ -113,6 +113,7 @@ st.markdown("""
     }
     [translate="no"] { translate: no; }
 
+    header[data-testid="stHeader"] { display: none !important; }
 
 </style>
 """, unsafe_allow_html=True)
