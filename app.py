@@ -817,14 +817,14 @@ elif "ChatDoc" in seleccion:
 # TAB 6: HSE Pro
 # ════════════════════════════════════════
 elif "HSE Pro" in seleccion:
-    st.subheader("🦺 HSE Pro — Formato Shell / Peduzzi")
+    st.subheader("🦺 HSE Pro — Formato Actualizado")
     st.caption("Generador de reportes HSE con el formato estándar usado por Shell, YPF y empresas contratistas de Vaca Muerta.")
 
     col1, col2 = st.columns(2)
     with col1:
-        st.info("📋 **Reporte Preliminar** — para Near Miss y Casi-Accidentes (formato RG-11-01 Shell)")
+        st.info("📋 **Reporte Preliminar** — para Near Miss y Casi-Accidentes (formato RG-11-01 Actualizado)")
     with col2:
-        st.warning("📋 **Reporte de Investigación** — para accidentes con lesiones (formato F01 PG-14 Peduzzi)")
+        st.warning("📋 **Reporte de Investigación** — para accidentes con lesiones (formato F01 PG-14 Actualizado)")
 
     st.divider()
 
@@ -982,7 +982,7 @@ elif "HSE Pro" in seleccion:
         with open(ruta_tmp, "rb") as f:
             contenido = f.read()
         st.download_button(
-            label="💾 Descargar reporte Word (formato Shell/Peduzzi)",
+            label="💾 Descargar reporte Word (formato Actualizado)",
             data=contenido,
             file_name=nombre_word,
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"

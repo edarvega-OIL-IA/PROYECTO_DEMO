@@ -8,7 +8,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 client = anthropic.Anthropic()
 
-# ── Categorías de causas raíz (formato Peduzzi/Shell) ──
+# ── Categorías de causas raíz (formato Actualizado) ──
 CAUSAS_RAIZ = {
     "FACTORES PERSONALES": {
         "1. CAPACIDAD FÍSICA / MENTAL INADECUADA": [
@@ -143,7 +143,7 @@ DOS TIPOS DE INFORMES:
 
 {NORMATIVA}
 
-SISTEMA DE CAUSAS RAÍZ (10 categorías estándar Shell/Peduzzi):
+SISTEMA DE CAUSAS RAÍZ (10 categorías estándar Actualizado):
 Usás EXACTAMENTE las categorías del sistema de 10 grupos definido.
 
 TUS REGLAS:
