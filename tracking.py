@@ -105,7 +105,7 @@ Requisitos del informe:
 1. Asunto de mail sugerido
 2. Conciso y profesional — máximo 12 líneas
 3. Estado actual claro y próximos pasos concretos
-4. Cierre con firma de Al Sur Transportes & Bienes Raíces S.A.
+4. Cierre con firma de Transporte EAV con IA
 5. Español argentino formal — NO inventar fechas
 
 Formato:
