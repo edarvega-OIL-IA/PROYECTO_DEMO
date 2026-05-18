@@ -67,20 +67,21 @@ Estructura exacta:
   "notas": "Condiciones de pago sugeridas, validez, observaciones técnicas relevantes."
 }}"""
 
-    message = client.messages.create(
-        model="claude-sonnet-4-5",
-        max_tokens=2000,
-        temperature=0,
-        messages=[{"role": "user", "content": prompt}]
-    )
-
-    texto = message.content[0].text
     try:
+        message = client.messages.create(
+            model="claude-sonnet-4-5",
+            max_tokens=2000,
+            temperature=0,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        texto = message.content[0].text
         match = re.search(r'\{.*\}', texto, re.DOTALL)
         if match:
             return json.loads(match.group())
-    except Exception:
-        pass
+        else:
+            st.error(f"⚠️ La IA no devolvió JSON válido. Respuesta: {texto[:300]}")
+    except Exception as e:
+        st.error(f"⚠️ Error real: {str(e)}")
     return None
 
 
