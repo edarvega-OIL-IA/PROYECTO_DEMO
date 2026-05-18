@@ -10,6 +10,8 @@ import licitaciones as licitai
 import chatdoc
 from utils import timestamp
 from presupuestos import presupuestos_page
+from tracking import tracking_page
+
 
 
 # ── Configuración ──
@@ -140,15 +142,42 @@ st.markdown("""
 st.divider()
 
 # ── Tabs ──
-tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
-    "📄 ContractAI – Análisis de contratos",
-    "📊 DataAI – Consulta de datos",
-    "🦺 HSE – Reporte de incidentes",
-    "🏆 Licitaciones – Comparador",
-    "💬 ChatDoc – Chat con documentos",
-    "🚨 HSE Pro – Formato Shell/Peduzzi",
-    "💰 PresupuestosAI – Presupuestos",     # ← nuevo
-])
+#tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
+#    "📄 ContractAI – Análisis de contratos",
+#    "📊 DataAI – Consulta de datos",
+#    "🦺 HSE – Reporte de incidentes",
+#    "🏆 Licitaciones – Comparador",
+#    "💬 ChatDoc – Chat con documentos",
+#    "🚨 HSE Pro – Formato Shell/Peduzzi",
+#    "💰 PresupuestosAI – Presupuestos",
+#    "🌐 TrackingAI – Embarques",
+#])
+
+# ── Menú lateral ──────────────────────────────────────────────────────────
+with st.sidebar:
+    st.markdown("### 🛢️ OilAI")
+    st.markdown("---")
+
+    st.markdown("**📁 Documentos**")
+    modulo = st.radio("", [
+        "📄 ContractAI",
+        "📋 LicitacionesAI",
+        "💬 ChatDoc",
+    ], label_visibility="collapsed", key="menu_docs")
+
+    st.markdown("**⚙️ Operaciones**")
+    modulo2 = st.radio("", [
+        "💰 PresupuestosAI",
+        "🌐 TrackingAI",
+        "📊 DataAI",
+    ], label_visibility="collapsed", key="menu_ops")
+
+    st.markdown("**🦺 Seguridad**")
+    modulo3 = st.radio("", [
+        "🦺 HSE",
+        "🚨 HSE Pro",
+    ], label_visibility="collapsed", key="menu_hse")
+
 
 
 # ════════════════════════════════════════
@@ -914,6 +943,12 @@ with tab6:
 # ════════════════════════════════════════
 with tab7:
     presupuestos_page()
+
+# ════════════════════════════════════════
+# TAB 8 TrackingAI – Embarques
+# ════════════════════════════════════════
+with tab8:
+    tracking_page()
 
 # ── Footer ──
 st.markdown("""
