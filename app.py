@@ -185,7 +185,10 @@ st.markdown("""
         .mobile-welcome { display: none !important; }
         .desktop-only { display: block !important; }
     }
-
+    header[data-testid="stHeader"] { display: none !important; }
+    [data-testid="stToolbar"] { display: none !important; }
+    #MainMenu { visibility: hidden !important; }
+            
 </style>
 """, unsafe_allow_html=True)
 
