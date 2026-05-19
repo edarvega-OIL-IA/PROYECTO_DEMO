@@ -1059,7 +1059,17 @@ elif "Presupuestos" in seleccion:
     presupuestos_page()
 
 elif "Tracking" in seleccion:
-    tracking_page()
+    st.markdown("### 🌐 TrackingAI")
+    pwd = st.text_input("🔐 Ingresá el código de acceso", type="password", key="tracking_pwd")
+    if pwd == st.secrets.get("TRACKING_PASSWORD", ""):
+        tracking_page()
+    elif pwd:
+        st.error("❌ Código incorrecto.")
+    else:
+        st.info("Este módulo requiere código de acceso. Contactá a Eduardo Ariel Vega para obtenerlo.")
+
+# elif "Tracking" in seleccion:
+#     tracking_page()
 
 # ── Footer ──
 st.markdown("""
