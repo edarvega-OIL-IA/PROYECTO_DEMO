@@ -185,10 +185,7 @@ st.markdown("""
         .mobile-welcome { display: none !important; }
         .desktop-only { display: block !important; }
     }
-    header[data-testid="stHeader"] { display: none !important; }
-    [data-testid="stToolbar"] { display: none !important; }
-    #MainMenu { visibility: hidden !important; }
-            
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -206,7 +203,7 @@ st.markdown("""
     <div class="mobile-modulos">
         <div class="mobile-modulo">📄 ContractAI <span>Analizá contratos con operadoras en segundos</span></div>
         <div class="mobile-modulo">💰 PresupuestosAI <span>Generá presupuestos técnicos completos con IA</span></div>
-        <div class="mobile-modulo">🚨 HSE Pro <span>Reportes de incidentes formato Shell/Peduzzi</span></div>
+        <div class="mobile-modulo">🚨 HSE Pro <span>Reportes de incidentes formato Personalizado</span></div>
         <div class="mobile-modulo">📋 LicitacionesAI <span>Comparador de pliegos con ranking automático</span></div>
         <div class="mobile-modulo">🌐 TrackingAI <span>Seguimiento de embarques internacionales</span></div>
         <div class="mobile-modulo">📊 DataAI <span>Consultá datos de pozos en lenguaje natural</span></div>
@@ -875,14 +872,14 @@ elif "ChatDoc" in seleccion:
 # TAB 6: HSE Pro
 # ════════════════════════════════════════
 elif "HSE Pro" in seleccion:
-    st.subheader("🦺 HSE Pro — Formato Shell / Peduzzi")
+    st.subheader("🦺 HSE Pro — Formato Personalizado")
     st.caption("Generador de reportes HSE con el formato estándar usado por Shell, YPF y empresas contratistas de Vaca Muerta.")
 
     col1, col2 = st.columns(2)
     with col1:
         st.info("📋 **Reporte Preliminar** — para Near Miss y Casi-Accidentes (formato RG-11-01 Shell)")
     with col2:
-        st.warning("📋 **Reporte de Investigación** — para accidentes con lesiones (formato F01 PG-14 Peduzzi)")
+        st.warning("📋 **Reporte de Investigación** — para accidentes con lesiones (formato Personalizado)")
 
     st.divider()
 
@@ -1040,7 +1037,7 @@ elif "HSE Pro" in seleccion:
         with open(ruta_tmp, "rb") as f:
             contenido = f.read()
         st.download_button(
-            label="💾 Descargar reporte Word (formato Shell/Peduzzi)",
+            label="💾 Descargar reporte Word (formato Personalizado)",
             data=contenido,
             file_name=nombre_word,
             mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document"
